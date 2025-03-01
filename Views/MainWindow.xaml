@@ -1,0 +1,126 @@
+﻿<Window x:Class="Compiler.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Compiler"
+        xmlns:vm="clr-namespace:Compiler.ViewModel"
+        mc:Ignorable="d"
+        Title="" Height="450" Width="800">
+
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+    
+    
+    <Grid>
+        <DockPanel>
+            <!-- Главное меню -->
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="Файл">
+                    <MenuItem Header="Создать" Command="{Binding NewDocumentCommand}" />
+                    <MenuItem Header="Открыть" Command="{Binding OpenDocumentCommand}" />
+                    <MenuItem Header="Сохранить" Command="{Binding SaveDocumentCommand}" />
+                    <MenuItem Header="Сохранить как" Command="{Binding SaveAsDocumentCommand}" />
+                    <MenuItem Header="Выход" Command="{Binding ExitApplicationCommand}" />
+                </MenuItem>
+                <MenuItem Header="Правка">
+                    <MenuItem Header="Отменить" Command="{Binding UndoCommand}" />
+                    <MenuItem Header="Повторить" Command="{Binding RedoCommand}" />
+                    <MenuItem Header="Вырезать" Command="{Binding CutCommand}" />
+                    <MenuItem Header="Копировать" Command="{Binding CopyCommand}" />
+                    <MenuItem Header="Вставить" Command="{Binding PasteCommand}" />
+                    <MenuItem Header="Удалить" Command="{Binding DeleteCommand}" />
+                    <MenuItem Header="Выделить все" Command="{Binding SelectAllCommand}" />
+                </MenuItem>
+                <MenuItem Header="Текст">
+                    <MenuItem Header="Постановка задачи" Command="{Binding ShowTaskCommand}" />
+                    <MenuItem Header="Грамматика" Command="{Binding ShowGrammarCommand}" />
+                    <MenuItem Header="Классификация грамматики" Command="{Binding ShowGrammarClassificationCommand}" />
+                    <MenuItem Header="Метод анализа" Command="{Binding ShowAnalysisMethodCommand}" />
+                    <MenuItem Header="Диагностика и нейтрализация ошибок" Command="{Binding ShowErrorDiagnosticsCommand}" />
+                    <MenuItem Header="Тестовый пример" Command="{Binding ShowTestExampleCommand}" />
+                    <MenuItem Header="Список литературы" Command="{Binding ShowLiteratureListCommand}" />
+                    <MenuItem Header="Исходный код программы" Command="{Binding ShowSourceCodeCommand}" />
+                    <MenuItem Header="Пуск" Command="{Binding StartExecutionCommand}" />
+                </MenuItem>
+                <MenuItem Header="Справка">
+                    <MenuItem Header="Вызов справки" Command="{Binding ShowHelpCommand}" />
+                    <MenuItem Header="О программе" Command="{Binding ShowAboutCommand}" />
+                </MenuItem>
+            </Menu>
+
+            <!-- Панель инструментов -->
+            <ToolBar DockPanel.Dock="Top">
+                <Button Command="{Binding NewDocumentCommand}">
+                    <Image Source="/Icons/addFile.png" Width="16" Height="16"/>
+                </Button>
+                <Button Command="{Binding OpenDocumentCommand}">
+                    <Image Source="/Icons/open.png" Width="16" Height="16"/>
+                </Button>
+                <Button Command="{Binding SaveDocumentCommand}">
+                    <Image Source="/Icons/save.png" Width="16" Height="16"/>
+                </Button>
+                <Separator/>
+                <Button Command="{Binding UndoCommand}">
+                    <Image Source="/Icons/undo.png" Width="16" Height="16"/>
+                </Button>
+                <Button Command="{Binding RedoCommand}">
+                    <Image Source="/Icons/redo.png" Width="16" Height="16"/>
+                </Button>
+                <Separator/>
+                <Button Command="{Binding CopyCommand}">
+                    <Image Source="/Icons/copy.png" Width="16" Height="16"/>
+                </Button>
+                <Button Command="{Binding CutCommand}">
+                    <Image Source="/Icons/cut.png" Width="16" Height="16"/>
+                </Button>
+                <Button Command="{Binding PasteCommand}">
+                    <Image Source="/Icons/paste.png" Width="16" Height="16"/>
+                </Button>
+                <Separator/>
+                <Button Command="{Binding StartExecutionCommand}">
+                    <Image Source="/Icons/runAll.png" Width="16" Height="16"/>
+                </Button>
+                <Button Command="{Binding ShowHelpCommand}">
+                    <Image Source="/Icons/help.png" Width="16" Height="16"/>
+                </Button>
+                <Button Command="{Binding ShowAboutCommand}">
+                    <Image Source="/Icons/infoOutline.png" Width="16" Height="16"/>
+                </Button>
+            </ToolBar>
+
+
+            <!-- Главный контейнер -->
+            <Grid DockPanel.Dock="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Окно ввода -->
+                <RichTextBox 
+                    FontFamily="Consolas"
+                    FontSize="14"
+                    AcceptsReturn="True"
+                    VerticalScrollBarVisibility="Auto"
+                    HorizontalScrollBarVisibility="Auto"
+                    Padding="5"/>
+
+                <!-- Разделитель -->
+                <GridSplitter Grid.Row="1" Height="5" Background="Gray" 
+                          HorizontalAlignment="Stretch"/>
+
+                <!-- Окно вывода -->
+                <TextBox Name="OutputTextBox"
+                     FontFamily="Consolas" FontSize="14"
+                     Background="WhiteSmoke" Foreground="Lime"
+                     IsReadOnly="True"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Auto"
+                     Grid.Row="2"/>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Window>
