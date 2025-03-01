@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Controls;
 using System.Windows.Documents;
 
 namespace Compiler.Model
@@ -8,6 +9,8 @@ namespace Compiler.Model
     {
         private string _fileName;
         private FlowDocument _document;
+        private string _filePath;
+        private RichTextBox _editor;
 
         public string FileName
         {
@@ -15,10 +18,23 @@ namespace Compiler.Model
             set { _fileName = value; OnPropertyChanged(); }
         }
 
+        
+        public string FilePath
+        {
+            get => _filePath;
+            set { _filePath = value; OnPropertyChanged(); }
+        }
+
         public FlowDocument Document
         {
             get => _document;
             set { _document = value; OnPropertyChanged(); }
+        }
+
+        public RichTextBox Editor
+        {
+            get => _editor;
+            set { _editor = value; OnPropertyChanged(); }
         }
 
         public DocumentModel(string fileName)

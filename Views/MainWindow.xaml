@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Compiler"
         xmlns:vm="clr-namespace:Compiler.ViewModel"
+        xmlns:helpers="clr-namespace:Compiler.Helpers"
         mc:Ignorable="d"
         Title="" Height="450" Width="800">
 
@@ -21,7 +22,7 @@
                     <MenuItem Header="Создать" Command="{Binding NewDocumentCommand}" />
                     <MenuItem Header="Открыть" Command="{Binding OpenDocumentCommand}" />
                     <MenuItem Header="Сохранить" Command="{Binding SaveDocumentCommand}" />
-                    <MenuItem Header="Сохранить как" Command="{Binding SaveAsDocumentCommand}" />
+                    <MenuItem Header="Сохранить как" Command="{Binding SaveDocumentAsCommand}" />
                     <MenuItem Header="Выход" Command="{Binding ExitApplicationCommand}" />
                 </MenuItem>
                 <MenuItem Header="Правка">
@@ -99,28 +100,52 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!-- Окно ввода -->
-                <RichTextBox 
-                    FontFamily="Consolas"
-                    FontSize="14"
-                    AcceptsReturn="True"
-                    VerticalScrollBarVisibility="Auto"
-                    HorizontalScrollBarVisibility="Auto"
-                    Padding="5"/>
+                <!-- Вкладки с документами -->
+                <TabControl ItemsSource="{Binding DocumentsVM.OpenDocuments}" 
+                SelectedItem="{Binding DocumentsVM.SelectedDocument}"
+                Grid.Row="0">
+                    <TabControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding FileName}" Margin="5,0"/>
+                                <Button Background="Transparent" BorderThickness="0"
+                                    Command="{Binding DataContext.DocumentsVM.CloseDocumentCommand, RelativeSource={RelativeSource AncestorType=TabControl}}" 
+                                    CommandParameter="{Binding}">
+                                    <Image Source="/Icons/close.png" Width="16" Height="16"/>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </TabControl.ItemTemplate>
+
+                    <TabControl.ContentTemplate>
+                        <DataTemplate>
+                            <RichTextBox FontFamily="Consolas"
+                                BorderThickness="0"
+                                FontSize="14"
+                                AcceptsReturn="True"
+                                VerticalScrollBarVisibility="Auto"
+                                HorizontalScrollBarVisibility="Auto"
+                                Padding="5"
+                                helpers:RichTextBoxHelper.BoundDocument="{Binding Document}"
+                                Loaded="RichTextBox_Loaded"/>
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
+                </TabControl>
 
                 <!-- Разделитель -->
-                <GridSplitter Grid.Row="1" Height="5" Background="Gray" 
-                          HorizontalAlignment="Stretch"/>
+                <GridSplitter Grid.Row="1" Height="5" Background="Gray" HorizontalAlignment="Stretch"/>
 
                 <!-- Окно вывода -->
                 <TextBox Name="OutputTextBox"
-                     FontFamily="Consolas" FontSize="14"
-                     Background="WhiteSmoke" Foreground="Lime"
-                     IsReadOnly="True"
-                     VerticalScrollBarVisibility="Auto"
-                     HorizontalScrollBarVisibility="Auto"
-                     Grid.Row="2"/>
+             FontFamily="Consolas" FontSize="14"
+             Background="WhiteSmoke" Foreground="Lime"
+             IsReadOnly="True"
+             VerticalScrollBarVisibility="Auto"
+             HorizontalScrollBarVisibility="Auto"
+             Grid.Row="2"/>
             </Grid>
+
+
         </DockPanel>
     </Grid>
 </Window>

@@ -21,13 +21,16 @@ namespace Compiler.ViewModel
         public ICommand NewDocumentCommand { get; }
         public ICommand OpenDocumentCommand { get; }
         public ICommand SaveDocumentCommand { get; }
+        public ICommand SaveDocumentAsCommand { get; }
         public ICommand CloseDocumentCommand { get; }
+       
 
         public DocumentsViewModel()
         {
             NewDocumentCommand = new RelayCommand(NewDocument);
             OpenDocumentCommand = new RelayCommand(OpenDocument);
             SaveDocumentCommand = new RelayCommand(SaveDocument);
+            SaveDocumentAsCommand = new RelayCommand(SaveDocumentAs);
             CloseDocumentCommand = new RelayCommand(CloseDocument);
         }
 
@@ -44,10 +47,12 @@ namespace Compiler.ViewModel
             if (openFileDialog.ShowDialog() == true)
             {
                 string content = File.ReadAllText(openFileDialog.FileName);
-                var doc = new DocumentModel(openFileDialog.FileName)
+
+                var doc = new DocumentModel(Path.GetFileName(openFileDialog.FileName)) // Только имя файла
                 {
                     Document = new FlowDocument(new Paragraph(new Run(content)))
                 };
+
                 OpenDocuments.Add(doc);
                 SelectedDocument = doc;
             }
@@ -57,14 +62,32 @@ namespace Compiler.ViewModel
         {
             if (SelectedDocument == null) return;
 
+            if (string.IsNullOrEmpty(SelectedDocument.FilePath))
+            {
+                SaveDocumentAs(parameter); // Если у документа нет пути, вызываем "Сохранить как..."
+            }
+            else
+            {
+                // Сохраняем файл по известному пути
+                TextRange textRange = new TextRange(SelectedDocument.Document.ContentStart, SelectedDocument.Document.ContentEnd);
+                File.WriteAllText(SelectedDocument.FilePath, textRange.Text);
+            }
+        }
+
+        private void SaveDocumentAs(object parameter)
+        {
+            if (SelectedDocument == null) return;
+
             SaveFileDialog saveFileDialog = new SaveFileDialog { Filter = "Текстовые файлы|*.txt|Все файлы|*.*" };
             if (saveFileDialog.ShowDialog() == true)
             {
                 TextRange textRange = new TextRange(SelectedDocument.Document.ContentStart, SelectedDocument.Document.ContentEnd);
                 File.WriteAllText(saveFileDialog.FileName, textRange.Text);
-                SelectedDocument.FileName = saveFileDialog.FileName;
+                SelectedDocument.FilePath = saveFileDialog.FileName; // Запоминаем путь файла
+                SelectedDocument.FileName = Path.GetFileName(saveFileDialog.FileName); // Обновляем название вкладки
             }
         }
+
 
         private void CloseDocument(object parameter)
         {

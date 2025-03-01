@@ -5,19 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
+
 
 namespace Compiler.ViewModel
 {
     public class MainViewModel : BaseViewModel
     {
-        public DocumentsViewModel DocumentsVM { get; }
-
-        public ICommand NewDocumentCommand => DocumentsVM.NewDocumentCommand;
-        public ICommand OpenDocumentCommand => DocumentsVM.OpenDocumentCommand;
-        public ICommand SaveDocumentCommand => DocumentsVM.SaveDocumentCommand;
-        public ICommand CloseDocumentCommand => DocumentsVM.CloseDocumentCommand;
-
+        /* Команды работы с текстом которые полностью реализовать в DocumentsVM*/
+        public DocumentsViewModel DocumentsVM { get; private set; }  
+        public ICommand NewDocumentCommand { get; }
+        public ICommand OpenDocumentCommand { get; }
+        public ICommand SaveDocumentCommand { get; }
+        public ICommand CloseDocumentCommand { get; }
+        public ICommand SaveDocumentAsCommand { get; }
 
         public ICommand ExitApplicationCommand { get; }
         public ICommand UndoCommand { get; }
@@ -27,6 +30,7 @@ namespace Compiler.ViewModel
         public ICommand PasteCommand { get; }
         public ICommand DeleteCommand { get; }
         public ICommand SelectAllCommand { get; }
+
         public ICommand ShowTaskCommand { get; }
         public ICommand ShowGrammarCommand { get; }
         public ICommand ShowGrammarClassificationCommand { get; }
@@ -41,15 +45,23 @@ namespace Compiler.ViewModel
 
         public MainViewModel()
         {
+            DocumentsVM = new DocumentsViewModel();
+            NewDocumentCommand = DocumentsVM.NewDocumentCommand;
+            OpenDocumentCommand = DocumentsVM.OpenDocumentCommand;
+            SaveDocumentCommand = DocumentsVM.SaveDocumentCommand;
+            SaveDocumentAsCommand = DocumentsVM.SaveDocumentAsCommand;
+            CloseDocumentCommand = DocumentsVM.CloseDocumentCommand;
 
             ExitApplicationCommand = new RelayCommand(ExitApplication);
-            UndoCommand = new RelayCommand(UndoAction);
-            RedoCommand = new RelayCommand(RedoAction);
-            CutCommand = new RelayCommand(CutText);
-            CopyCommand = new RelayCommand(CopyText);
-            PasteCommand = new RelayCommand(PasteText);
-            DeleteCommand = new RelayCommand(DeleteText);
-            SelectAllCommand = new RelayCommand(SelectAllText);
+            UndoCommand = new RelayCommand(ExecuteUndo);
+            RedoCommand = new RelayCommand(ExecuteRedo);
+            CutCommand = new RelayCommand(ExecuteCut);
+            CopyCommand = new RelayCommand(ExecuteCopy);
+            PasteCommand = new RelayCommand(ExecutePaste);
+            DeleteCommand = new RelayCommand(ExecuteDelete);
+            SelectAllCommand = new RelayCommand(ExecuteSelectAll);
+
+
             ShowTaskCommand = new RelayCommand(ShowTaskDefinition);
             ShowGrammarCommand = new RelayCommand(ShowGrammar);
             ShowGrammarClassificationCommand = new RelayCommand(ShowGrammarClassification);
@@ -61,56 +73,36 @@ namespace Compiler.ViewModel
             StartExecutionCommand = new RelayCommand(StartExecution);
             ShowHelpCommand = new RelayCommand(ShowHelp);
             ShowAboutCommand = new RelayCommand(ShowAbout);
+
+
         }
 
+        private void ExecuteUndo(object parameter) => SelectedRichTextBox()?.Undo();
+        private void ExecuteRedo(object parameter) => SelectedRichTextBox()?.Redo();
+        private void ExecuteCut(object parameter) => SelectedRichTextBox()?.Cut();
+        private void ExecuteCopy(object parameter) => SelectedRichTextBox()?.Copy();
+        private void ExecutePaste(object parameter) => SelectedRichTextBox()?.Paste();
+        private void ExecuteSelectAll(object parameter) => SelectedRichTextBox()?.SelectAll();
+
+        private void ExecuteDelete(object parameter)
+        {
+            var richTextBox = SelectedRichTextBox();
+            if (richTextBox != null)
+            {
+                EditingCommands.Delete.Execute(null, richTextBox);
+            }
+        }
+
+
+        private RichTextBox SelectedRichTextBox() => DocumentsVM.SelectedDocument?.Editor;
 
         /// <summary> Обработчик события для выхода из программы </summary>
         private void ExitApplication(object parameter)
         {
-            MessageBox.Show("5 - Выход");
+            Application.Current.Shutdown();
         }
 
-        /// <summary> Обработчик события для отмены действия </summary>
-        private void UndoAction(object parameter)
-        {
-            MessageBox.Show("6 - Отменить");
-        }
-
-        /// <summary> Обработчик события для повтора действия </summary>
-        private void RedoAction(object parameter)
-        {
-            MessageBox.Show("7 - Повторить");
-        }
-
-        /// <summary> Обработчик события для вырезания текста </summary>
-        private void CutText(object parameter)
-        {
-            MessageBox.Show("8 - Вырезать");
-        }
-
-        /// <summary> Обработчик события для копирования текста </summary>
-        private void CopyText(object parameter)
-        {
-            MessageBox.Show("9 - Копировать");
-        }
-
-        /// <summary> Обработчик события для вставки текста </summary>
-        private void PasteText(object parameter)
-        {
-            MessageBox.Show("10 - Вставить");
-        }
-
-        /// <summary> Обработчик события для удаления текста </summary>
-        private void DeleteText(object parameter)
-        {
-            MessageBox.Show("11 - Удалить");
-        }
-
-        /// <summary> Обработчик события для выделения всего текста </summary>
-        private void SelectAllText(object parameter)
-        {
-            MessageBox.Show("12 - Выделить все");
-        }
+        
 
         /// <summary> Обработчик события для пункта "Постановка задачи" </summary>
         private void ShowTaskDefinition(object parameter)

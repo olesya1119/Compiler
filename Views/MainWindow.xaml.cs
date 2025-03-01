@@ -24,6 +24,12 @@ namespace Compiler
             DataContext = new MainViewModel();
         }
 
-
+        private void RichTextBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is RichTextBox richTextBox && DataContext is MainViewModel vm && vm.DocumentsVM.SelectedDocument != null)
+            {
+                vm.DocumentsVM.SelectedDocument.Editor = richTextBox;
+            }
+        }
     }
 }
