@@ -25,6 +25,20 @@ namespace Compiler
             DataContext = new MainViewModel();
         }
 
+        private void RichTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is RichTextBox richTextBox)
+            {
+                foreach (Block block in richTextBox.Document.Blocks)
+                {
+                    if (block is Paragraph paragraph)
+                    {
+                        paragraph.Margin = new Thickness(0);
+                    }
+                }
+            }
+        }
+
 
     }
 }

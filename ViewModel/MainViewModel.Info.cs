@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Compiler.Views;
 
 namespace Compiler.ViewModel
 {
@@ -25,13 +26,15 @@ namespace Compiler.ViewModel
         /// <summary> Обработчик события для вызова справки </summary>
         private void ShowHelp(object parameter)
         {
-            MessageBox.Show("Вызов справки");
+            HelpWindow helpWindow = new HelpWindow();
+            helpWindow.Show();
         }
 
         /// <summary> Обработчик события для информации о программе </summary>
         private void ShowAbout(object parameter)
         {
-            MessageBox.Show("О программе");
+            AboutWindow aboutWindow = new AboutWindow();
+            aboutWindow.Show();
         }
     }
 

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Compiler.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,8 +21,7 @@ namespace Compiler.Views
     /// </summary>
     public partial class HelpWindow : Window
     {
-        public HelpWindow()
-        {
+        public HelpWindow() {
             InitializeComponent();
         }
     }

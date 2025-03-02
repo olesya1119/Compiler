@@ -1,13 +1,87 @@
 ﻿<Window x:Class="Compiler.Views.HelpWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Compiler.Views"
-        mc:Ignorable="d"
-        Title="HelpWindow" Height="450" Width="800">
-    <Grid>
-        <TextBlock FontFamily="Consolas">123456DsddsdsSDSDSDsdывывывЫЫВЫВы</TextBlock>
-        
-    </Grid>
+        Title="Справочная система"
+        Height="500" Width="600"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20">
+
+            
+            <!-- Заголовок -->
+            <TextBlock Text="Справочная система" 
+                       FontSize="18" FontWeight="Bold"
+                       HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Text="В программе реализован следующий функционал:" FontSize="14"/>
+            </StackPanel>
+
+            <!-- Раздел: Файл -->
+            <TextBlock Text="Файл" FontSize="16" FontWeight="Bold" Margin="0,10,0,5"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <Image Source="/Icons/addFile.png" Width="20" Height="20" Margin="0,0,10,0"/>
+                <TextBlock Text="Создать - Открывает новый пустой документ." FontSize="14"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <Image Source="/Icons/open.png" Width="20" Height="20" Margin="0,0,10,0"/>
+                <TextBlock Text="Открыть - Открывает диалоговое окно для выбора файла." FontSize="14"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <Image Source="/Icons/save.png" Width="20" Height="20" Margin="0,0,10,0"/>
+                <TextBlock Text="Сохранить - Сохраняет текущий документ." FontSize="14"/>
+            </StackPanel>
+            <TextBlock Text="        Сохранить как - Открывает диалоговое окно сохранения файла" FontSize="14" Height="25"/>
+            <TextBlock Text="        Выход - Закрытие программы" FontSize="14" Height="25"/>
+
+            <!-- Раздел: Правка -->
+            <TextBlock Text="Правка" FontSize="16" FontWeight="Bold" Margin="0,15,0,5"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <Image Source="/Icons/undo.png" Width="20" Height="20" Margin="0,0,10,0"/>
+                <TextBlock Text="Отменить - Отменяет последнее действие." FontSize="14"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <Image Source="/Icons/redo.png" Width="20" Height="20" Margin="0,0,10,0"/>
+                <TextBlock Text="Повторить - Повторяет отменённое действие." FontSize="14"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <Image Source="/Icons/copy.png" Width="20" Height="20" Margin="0,0,10,0"/>
+                <TextBlock Text="Копировать - Копирует выделенный текст." FontSize="14"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <Image Source="/Icons/cut.png" Width="20" Height="20" Margin="0,0,10,0"/>
+                <TextBlock Text="Вырезать - Вырезает выделенный текст." FontSize="14"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <Image Source="/Icons/paste.png" Width="20" Height="20" Margin="0,0,10,0"/>
+                <TextBlock Text="Вставить - Вставляет текст из буфера обмена." FontSize="14"/>
+            </StackPanel>
+            <TextBlock Text="        Удалить - Удаляет выделенный фрагмент или символ" FontSize="14" Height="25"/>
+            <TextBlock Text="        Выделить все - Выделяет все" FontSize="14" Height="25"/>
+
+            <!-- Раздел: Справка -->
+            <TextBlock Text="Справка" FontSize="16" FontWeight="Bold" Margin="0,15,0,5"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <Image Source="/Icons/help.png" Width="20" Height="20" Margin="0,0,10,0"/>
+                <TextBlock Text="Справка - Открывает справочную систему." FontSize="14"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <Image Source="/Icons/infoOutline.png" Width="20" Height="20" Margin="0,0,10,0"/>
+                <TextBlock Text="О программе - Информация о программе." FontSize="14"/>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
 </Window>

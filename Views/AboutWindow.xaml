@@ -1,0 +1,42 @@
+﻿<Window x:Class="Compiler.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="О программе"
+        Height="300" Width="500"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Icon="/Icons/go.ico">
+
+    <Grid Margin="20">
+        <StackPanel HorizontalAlignment="Center">
+            <!-- Заголовок -->
+            <TextBlock Text="О программе"
+                       FontSize="18" FontWeight="Bold"
+                       Foreground="#FF60506B"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,10"/>
+
+            <!-- Основной текст -->
+     
+            <TextBlock FontSize="14"
+                       Foreground="#FF4A4848"
+                       TextAlignment="Left"
+                       TextWrapping="Wrap"
+                       Width="450">
+                <Run Text="Работа выполнена студенткой 3-его курса АВТФ НГТУ группы АВТ-214 Бульчук Олесей, в рамках программы дисциплины 'Теория формальных языков и компиляторов'. "/><LineBreak/>
+                <Run Text="в 6 семестре 2025 года под руководством профессора кафедры Автоматизированных Систем Управления Шорникова Юрия Владимировича." /><LineBreak/>
+
+            </TextBlock>
+
+            <!-- Ссылка на GitHub -->
+            <TextBlock FontSize="14"
+                       Foreground="#FFECA4A4"
+                       Text="Ссылка на GitHub репозиторий"
+                       TextAlignment="Center"
+                       Cursor="Hand"
+                       MouseLeftButtonUp="OpenGitHubLink"
+                       Margin="0,5,0,10" FontStyle="Italic" TextDecorations="Underline"/>
+
+        </StackPanel>
+    </Grid>
+</Window>
