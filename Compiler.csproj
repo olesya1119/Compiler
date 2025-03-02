@@ -73,7 +73,11 @@
     <Compile Include="Model\ErrorModel.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\DocumentsViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.Analysis.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.Info.cs" />
+    <Compile Include="ViewModel\MainViewModel.Shortcut.cs" />
+    <Compile Include="ViewModel\MainViewModel.TextEditing.cs" />
     <Compile Include="Views\HelpWindow.xaml.cs">
       <DependentUpon>HelpWindow.xaml</DependentUpon>
     </Compile>
