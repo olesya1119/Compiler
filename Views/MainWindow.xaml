@@ -7,7 +7,8 @@
         xmlns:vm="clr-namespace:Compiler.ViewModel"
         xmlns:helpers="clr-namespace:Compiler.Helpers"
         mc:Ignorable="d"
-        Title="" Height="450" Width="800">
+        Icon="/Icons/go.ico"
+        Title="Создание функции языка Go" Height="450" Width="800">
 
     <Window.DataContext>
         <vm:MainViewModel />
@@ -43,8 +44,8 @@
                     <MenuItem Header="Тестовый пример" Command="{Binding ShowTestExampleCommand}" />
                     <MenuItem Header="Список литературы" Command="{Binding ShowLiteratureListCommand}" />
                     <MenuItem Header="Исходный код программы" Command="{Binding ShowSourceCodeCommand}" />
-                    <MenuItem Header="Пуск" Command="{Binding StartExecutionCommand}" />
                 </MenuItem>
+                <MenuItem Header="Пуск" Command="{Binding StartExecutionCommand}"/>
                 <MenuItem Header="Справка">
                     <MenuItem Header="Вызов справки" Command="{Binding ShowHelpCommand}" />
                     <MenuItem Header="О программе" Command="{Binding ShowAboutCommand}" />
@@ -126,8 +127,7 @@
                                 VerticalScrollBarVisibility="Auto"
                                 HorizontalScrollBarVisibility="Auto"
                                 Padding="5"
-                                helpers:RichTextBoxHelper.BoundDocument="{Binding Document}"
-                                Loaded="RichTextBox_Loaded"/>
+                                helpers:RichTextBoxHelper.BoundDocument="{Binding Document}"/>
                         </DataTemplate>
                     </TabControl.ContentTemplate>
                 </TabControl>
@@ -135,14 +135,21 @@
                 <!-- Разделитель -->
                 <GridSplitter Grid.Row="1" Height="5" Background="Gray" HorizontalAlignment="Stretch"/>
 
-                <!-- Окно вывода -->
-                <TextBox Name="OutputTextBox"
-             FontFamily="Consolas" FontSize="14"
-             Background="WhiteSmoke" Foreground="Lime"
-             IsReadOnly="True"
-             VerticalScrollBarVisibility="Auto"
-             HorizontalScrollBarVisibility="Auto"
-             Grid.Row="2"/>
+                <DataGrid ItemsSource="{Binding Errors}"
+                    AutoGenerateColumns="False"
+                    Grid.Row="2"
+                    SelectionMode="Single"
+                    IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="№" Binding="{Binding Number}" Width="40"/>
+                        <DataGridTextColumn Header="Файл" Binding="{Binding FileName}" Width="150"/>
+                        <DataGridTextColumn Header="Строка" Binding="{Binding Line}" Width="60"/>
+                        <DataGridTextColumn Header="Столбец" Binding="{Binding Column}" Width="60"/>
+                        <DataGridTextColumn Header="Сообщение" Binding="{Binding Message}" Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+
             </Grid>
 
 

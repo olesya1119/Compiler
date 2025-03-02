@@ -1,6 +1,4 @@
-﻿using Compiler.Model;
-using Compiler.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,19 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Compiler
+namespace Compiler.Views
 {
-    public partial class MainWindow : Window
+    /// <summary>
+    /// Логика взаимодействия для HelpWindow.xaml
+    /// </summary>
+    public partial class HelpWindow : Window
     {
-        public MainWindow()
+        public HelpWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
         }
-
-
     }
 }

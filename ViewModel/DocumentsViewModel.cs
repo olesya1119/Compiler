@@ -7,16 +7,28 @@ using System.Windows.Documents;
 
 namespace Compiler.ViewModel
 {
+    /// <summary> ViewModel для работы с документами </summary>
     public class DocumentsViewModel : BaseViewModel
     {
-        public ObservableCollection<DocumentModel> OpenDocuments { get; set; } = new ObservableCollection<DocumentModel>();
         private DocumentModel _selectedDocument;
 
+        /// <summary> Список открытых документов </summary>
+        public ObservableCollection<DocumentModel> OpenDocuments { get; set; } = new ObservableCollection<DocumentModel>();
+        
+        /// <summary> Текущий документ </summary>
         public DocumentModel SelectedDocument
         {
             get => _selectedDocument;
-            set { _selectedDocument = value; OnPropertyChanged(); }
+            set
+            {
+                _selectedDocument = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(SelectedErrors)); // Обновляем ошибки при смене документа
+            }
         }
+
+        /// <summary> Список ошибкок в текущем документе </summary>
+        public ObservableCollection<ErrorModel> SelectedErrors => SelectedDocument?.Errors;
 
         public ICommand NewDocumentCommand { get; }
         public ICommand OpenDocumentCommand { get; }
@@ -98,5 +110,15 @@ namespace Compiler.ViewModel
                     SelectedDocument = OpenDocuments[0];
             }
         }
+
+        public void AddError(int line, int column, string message)
+        {
+            if (SelectedDocument != null)
+            {
+                SelectedDocument.AddError(line, column, message);
+                OnPropertyChanged(nameof(SelectedErrors)); 
+            }
+        }
+
     }
 }

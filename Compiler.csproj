@@ -55,6 +55,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Views\HelpWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -64,10 +68,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Helpers\RichTextBoxHelper.cs" />
+    <Compile Include="Model\BaseModel.cs" />
     <Compile Include="Model\DocumentModel.cs" />
+    <Compile Include="Model\ErrorModel.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\DocumentsViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="Views\HelpWindow.xaml.cs">
+      <DependentUpon>HelpWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -114,6 +123,28 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\go.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\go.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\icons\addFile.png" />
+    <Resource Include="Icons\icons\close.png" />
+    <Resource Include="Icons\icons\copy.png" />
+    <Resource Include="Icons\icons\cut.png" />
+    <Resource Include="Icons\icons\go.ico" />
+    <Resource Include="Icons\icons\go.png" />
+    <Resource Include="Icons\icons\help.png" />
+    <Resource Include="Icons\icons\infoOutline.png" />
+    <Resource Include="Icons\icons\open.png" />
+    <Resource Include="Icons\icons\paste.png" />
+    <Resource Include="Icons\icons\redo.png" />
+    <Resource Include="Icons\icons\runAll.png" />
+    <Resource Include="Icons\icons\save.png" />
+    <Resource Include="Icons\icons\undo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

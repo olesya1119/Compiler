@@ -1,6 +1,8 @@
 ﻿using Compiler.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +17,11 @@ namespace Compiler.ViewModel
     public class MainViewModel : BaseViewModel
     {
         /* Команды работы с текстом которые полностью реализовать в DocumentsVM*/
-        public DocumentsViewModel DocumentsVM { get; private set; }  
+        public DocumentsViewModel DocumentsVM { get; private set; }
+
+        public ObservableCollection<ErrorModel> Errors => DocumentsVM.SelectedErrors;
+
+
         public ICommand NewDocumentCommand { get; }
         public ICommand OpenDocumentCommand { get; }
         public ICommand SaveDocumentCommand { get; }
@@ -46,6 +52,9 @@ namespace Compiler.ViewModel
         public MainViewModel()
         {
             DocumentsVM = new DocumentsViewModel();
+            DocumentsVM.PropertyChanged += DocumentsVM_PropertyChanged;
+
+
             NewDocumentCommand = DocumentsVM.NewDocumentCommand;
             OpenDocumentCommand = DocumentsVM.OpenDocumentCommand;
             SaveDocumentCommand = DocumentsVM.SaveDocumentCommand;
@@ -73,9 +82,9 @@ namespace Compiler.ViewModel
             StartExecutionCommand = new RelayCommand(StartExecution);
             ShowHelpCommand = new RelayCommand(ShowHelp);
             ShowAboutCommand = new RelayCommand(ShowAbout);
-
-
         }
+
+        private RichTextBox SelectedRichTextBox() => DocumentsVM.SelectedDocument?.Editor;
 
         private void ExecuteUndo(object parameter) => SelectedRichTextBox()?.Undo();
         private void ExecuteRedo(object parameter) => SelectedRichTextBox()?.Redo();
@@ -93,14 +102,18 @@ namespace Compiler.ViewModel
             }
         }
 
+        // Отслеживаем изменение `SelectedDocument`
+        private void DocumentsVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(DocumentsVM.SelectedDocument))
+            {
+                OnPropertyChanged(nameof(Errors)); // Теперь DataGrid обновится
+            }
+        }
 
-        private RichTextBox SelectedRichTextBox() => DocumentsVM.SelectedDocument?.Editor;
 
         /// <summary> Обработчик события для выхода из программы </summary>
-        private void ExitApplication(object parameter)
-        {
-            Application.Current.Shutdown();
-        }
+        private void ExitApplication(object parameter) => Application.Current.Shutdown();
 
         
 
@@ -153,9 +166,15 @@ namespace Compiler.ViewModel
         }
 
         /// <summary> Обработчик события для запуска программы </summary>
+
+
         private void StartExecution(object parameter)
         {
-            MessageBox.Show("21 - Пуск");
+            if (DocumentsVM.SelectedDocument != null)
+            {
+                DocumentsVM.AddError(3, 1, "Опачки");
+                OnPropertyChanged(nameof(Errors));
+            }
         }
 
         /// <summary> Обработчик события для вызова справки </summary>
