@@ -39,6 +39,14 @@ namespace Compiler
             }
         }
 
+        private void RichTextBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is RichTextBox richTextBox && richTextBox.DataContext is DocumentModel doc)
+            {
+                doc.Editor = richTextBox;
+            }
+        }
+
 
     }
 }

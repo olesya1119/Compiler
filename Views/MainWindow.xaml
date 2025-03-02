@@ -127,6 +127,7 @@
                                 VerticalScrollBarVisibility="Auto"
                                 HorizontalScrollBarVisibility="Auto"
                                 Padding="5"
+                                Loaded="RichTextBox_Loaded"
                                 TextChanged="RichTextBox_TextChanged"
                                 helpers:RichTextBoxHelper.BoundDocument="{Binding Document}"/>
                         </DataTemplate>
