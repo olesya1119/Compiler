@@ -8,27 +8,68 @@ namespace Compiler.Model
         private string _fileName;
         private string _filePath;
         private string _textContent;
+        private bool _status;
         private ObservableCollection<ErrorModel> _errors = new ObservableCollection<ErrorModel>();
 
         public string FileName
         {
-            get => _fileName;
-            set { _fileName = value; OnPropertyChanged(); }
+            get
+            {
+                if (_status)
+                {
+                    return "* " + _fileName;
+                }
+                return _fileName;
+            }
+            set
+            {
+                if (_fileName != value)
+                {
+                    _fileName = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(FileName)); 
+                }
+            }
         }
 
         public string FilePath
         {
-            get => _filePath;
+            get => _filePath;  
             set { _filePath = value; OnPropertyChanged(); }
+        }
+
+        
+
+        public bool Status
+        {
+            get => _status;
+            set
+            {
+                if (_status != value)
+                {
+                    _status = value;
+                    OnPropertyChanged(nameof(Status));
+                    OnPropertyChanged(nameof(FileName)); // Обновляем имя файла, когда статус меняется
+                }
+            }
         }
 
         public string TextContent
         {
             get => _textContent;
-            set { _textContent = value; OnPropertyChanged(); }
+            set
+            {
+                if (_textContent != value)
+                {
+                    _textContent = value;
+                    Status = true; // Документ изменен
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(FileName)); // Обновляем название файла
+                }
+            }
         }
 
-       
+
         public ObservableCollection<ErrorModel> Errors
         {
             get => _errors;

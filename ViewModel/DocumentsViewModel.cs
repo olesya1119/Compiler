@@ -73,7 +73,9 @@ namespace Compiler.ViewModel
 
         private void SaveDocument(object parameter)
         {
+            
             if (SelectedDocument == null) return;
+            SelectedDocument.Status = false;
 
             if (string.IsNullOrEmpty(SelectedDocument.FilePath))
             {
@@ -88,6 +90,7 @@ namespace Compiler.ViewModel
         private void SaveDocumentAs(object parameter)
         {
             if (SelectedDocument == null) return;
+            SelectedDocument.Status = false;
 
             SaveFileDialog saveFileDialog = new SaveFileDialog { Filter = "Текстовые файлы|*.txt|Все файлы|*.*" };
             if (saveFileDialog.ShowDialog() == true)

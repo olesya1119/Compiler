@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using Compiler.Model;
+using Compiler.Views;
 using ICSharpCode.AvalonEdit;
 
 namespace Compiler.ViewModel
@@ -31,6 +32,8 @@ namespace Compiler.ViewModel
             InitTextEditingCommand();
             InitInfoCommand();
         }
+
+        
 
     }
 }

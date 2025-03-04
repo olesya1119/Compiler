@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml;
+using Compiler.Views;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
@@ -55,6 +56,26 @@ namespace Compiler
                 if (doc != null)
                 {
                     doc.TextContent = editor.Text;
+                }
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (DataContext is ViewModel.MainViewModel vm && vm.DocumentsVM.SelectedDocument != null && vm.DocumentsVM.SelectedDocument.Status) // если документ изменен
+            {
+                var confirmWindow = new ConfirmExitWindow();
+                confirmWindow.Owner = this; // Устанавливаем владельцем главное окно
+                confirmWindow.ShowDialog(); // Показываем окно подтверждения
+
+                if (confirmWindow.SaveChanges)
+                {
+                    vm.SaveDocumentCommand.Execute(null); // Сохраняем документ
+                }
+                else
+                {
+                    // Если не нужно сохранять, просто закрываем
+                    e.Cancel = false;
                 }
             }
         }
