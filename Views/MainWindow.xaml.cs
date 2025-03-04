@@ -1,19 +1,11 @@
-﻿using Compiler.Model;
-using Compiler.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Reflection;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Xml;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 
 namespace Compiler
 {
@@ -22,31 +14,51 @@ namespace Compiler
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
-        }
 
-        private void RichTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (sender is RichTextBox richTextBox)
+            // Загружаем и регистрируем подсветку Go из ресурса
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Compiler.GoMode.xshd"))
             {
-                foreach (Block block in richTextBox.Document.Blocks)
+                if (stream != null)
                 {
-                    if (block is Paragraph paragraph)
+                    using (var reader = new XmlTextReader(stream))
                     {
-                        paragraph.Margin = new Thickness(0);
+                        var highlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                        HighlightingManager.Instance.RegisterHighlighting("Go", new[] { ".go" }, highlighting);
                     }
+                }
+                else
+                {
+                    MessageBox.Show("Не удалось загрузить GoMode.xshd. Проверь путь к ресурсу.");
                 }
             }
         }
 
-        private void RichTextBox_Loaded(object sender, RoutedEventArgs e)
+        private void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is RichTextBox richTextBox && richTextBox.DataContext is DocumentModel doc)
+            if (sender is TextEditor editor && DataContext is ViewModel.MainViewModel vm)
             {
-                doc.Editor = richTextBox;
+                var doc = vm.DocumentsVM.SelectedDocument;
+                if (doc != null)
+                {
+                    vm.DocumentsVM.Editor = editor;
+                    editor.Text = doc.TextContent;
+                    editor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("Go"); // Используем Go
+                }
             }
         }
 
-
+        private void TextEditor_TextChanged(object sender, System.EventArgs e)
+        {
+            if (sender is TextEditor editor && DataContext is ViewModel.MainViewModel vm)
+            {
+                var doc = vm.DocumentsVM.SelectedDocument;
+                if (doc != null)
+                {
+                    doc.TextContent = editor.Text;
+                }
+            }
+        }
     }
+
+    
 }

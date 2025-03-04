@@ -3,19 +3,18 @@ using System.IO;
 using System.Windows.Input;
 using Microsoft.Win32;
 using Compiler.Model;
-using System.Windows.Documents;
+using ICSharpCode.AvalonEdit;
 
 namespace Compiler.ViewModel
 {
-    /// <summary> ViewModel для работы с документами </summary>
     public class DocumentsViewModel : BaseViewModel
     {
         private DocumentModel _selectedDocument;
 
-        /// <summary> Список открытых документов </summary>
         public ObservableCollection<DocumentModel> OpenDocuments { get; set; } = new ObservableCollection<DocumentModel>();
-        
-        /// <summary> Текущий документ </summary>
+
+        private TextEditor _editor;
+
         public DocumentModel SelectedDocument
         {
             get => _selectedDocument;
@@ -23,11 +22,10 @@ namespace Compiler.ViewModel
             {
                 _selectedDocument = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(SelectedErrors)); // Обновляем ошибки при смене документа
+                OnPropertyChanged(nameof(SelectedErrors));
             }
         }
 
-        /// <summary> Список ошибкок в текущем документе </summary>
         public ObservableCollection<ErrorModel> SelectedErrors => SelectedDocument?.Errors;
 
         public ICommand NewDocumentCommand { get; }
@@ -35,7 +33,6 @@ namespace Compiler.ViewModel
         public ICommand SaveDocumentCommand { get; }
         public ICommand SaveDocumentAsCommand { get; }
         public ICommand CloseDocumentCommand { get; }
-       
 
         public DocumentsViewModel()
         {
@@ -44,6 +41,12 @@ namespace Compiler.ViewModel
             SaveDocumentCommand = new RelayCommand(SaveDocument);
             SaveDocumentAsCommand = new RelayCommand(SaveDocumentAs);
             CloseDocumentCommand = new RelayCommand(CloseDocument);
+        }
+
+        public TextEditor Editor
+        {
+            get => _editor;
+            set { _editor = value; OnPropertyChanged(); }
         }
 
         private void NewDocument(object parameter)
@@ -59,12 +62,10 @@ namespace Compiler.ViewModel
             if (openFileDialog.ShowDialog() == true)
             {
                 string content = File.ReadAllText(openFileDialog.FileName);
-
-                var doc = new DocumentModel(Path.GetFileName(openFileDialog.FileName)) // Только имя файла
+                var doc = new DocumentModel(Path.GetFileName(openFileDialog.FileName))
                 {
-                    Document = new FlowDocument(new Paragraph(new Run(content)))
+                    TextContent = content
                 };
-
                 OpenDocuments.Add(doc);
                 SelectedDocument = doc;
             }
@@ -76,13 +77,11 @@ namespace Compiler.ViewModel
 
             if (string.IsNullOrEmpty(SelectedDocument.FilePath))
             {
-                SaveDocumentAs(parameter); // Если у документа нет пути, вызываем "Сохранить как..."
+                SaveDocumentAs(parameter);
             }
             else
             {
-                // Сохраняем файл по известному пути
-                TextRange textRange = new TextRange(SelectedDocument.Document.ContentStart, SelectedDocument.Document.ContentEnd);
-                File.WriteAllText(SelectedDocument.FilePath, textRange.Text);
+                File.WriteAllText(SelectedDocument.FilePath, SelectedDocument.TextContent);
             }
         }
 
@@ -93,13 +92,11 @@ namespace Compiler.ViewModel
             SaveFileDialog saveFileDialog = new SaveFileDialog { Filter = "Текстовые файлы|*.txt|Все файлы|*.*" };
             if (saveFileDialog.ShowDialog() == true)
             {
-                TextRange textRange = new TextRange(SelectedDocument.Document.ContentStart, SelectedDocument.Document.ContentEnd);
-                File.WriteAllText(saveFileDialog.FileName, textRange.Text);
-                SelectedDocument.FilePath = saveFileDialog.FileName; // Запоминаем путь файла
-                SelectedDocument.FileName = Path.GetFileName(saveFileDialog.FileName); // Обновляем название вкладки
+                File.WriteAllText(saveFileDialog.FileName, SelectedDocument.TextContent);
+                SelectedDocument.FilePath = saveFileDialog.FileName;
+                SelectedDocument.FileName = Path.GetFileName(saveFileDialog.FileName);
             }
         }
-
 
         private void CloseDocument(object parameter)
         {
@@ -116,9 +113,8 @@ namespace Compiler.ViewModel
             if (SelectedDocument != null)
             {
                 SelectedDocument.AddError(line, column, message);
-                OnPropertyChanged(nameof(SelectedErrors)); 
+                OnPropertyChanged(nameof(SelectedErrors));
             }
         }
-
     }
 }

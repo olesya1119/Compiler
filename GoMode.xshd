@@ -1,0 +1,86 @@
+﻿<?xml version="1.0"?>
+<!-- syntax definition for Go by Grok, based on JavaScript-Mode.xshd -->
+<SyntaxDefinition name="Go" extensions=".go" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<Color name="Digits" foreground="Purple" exampleText="42" />
+	<Color name="Comment" foreground="Green" exampleText="// comment" />
+	<Color name="String" foreground="Red" />
+	<Color name="GoKeywords" foreground="Blue" fontWeight="bold" exampleText="func main() {}" />
+	<Color name="GoTypes" foreground="DarkBlue" exampleText="var x int" />
+	
+	<RuleSet ignoreCase="false">
+		<!-- Ключевые слова Go -->
+		<Keywords color="GoKeywords">
+			<Word>break</Word>
+			<Word>case</Word>
+			<Word>chan</Word>
+			<Word>const</Word>
+			<Word>continue</Word>
+			<Word>default</Word>
+			<Word>defer</Word>
+			<Word>else</Word>
+			<Word>fallthrough</Word>
+			<Word>for</Word>
+			<Word>func</Word>
+			<Word>go</Word>
+			<Word>goto</Word>
+			<Word>if</Word>
+			<Word>import</Word>
+			<Word>interface</Word>
+			<Word>package</Word>
+			<Word>range</Word>
+			<Word>return</Word>
+			<Word>select</Word>
+			<Word>struct</Word>
+			<Word>switch</Word>
+			<Word>type</Word>
+			<Word>var</Word>
+		</Keywords>
+
+		<!-- Типы данных Go -->
+		<Keywords color="GoTypes">
+			<Word>int</Word>
+			<Word>int8</Word>
+			<Word>int16</Word>
+			<Word>int32</Word>
+			<Word>int64</Word>
+			<Word>uint</Word>
+			<Word>uint8</Word>
+			<Word>uint16</Word>
+			<Word>uint32</Word>
+			<Word>uint64</Word>
+			<Word>byte</Word>
+			<Word>rune</Word>
+			<Word>float32</Word>
+			<Word>float64</Word>
+			<Word>complex64</Word>
+			<Word>complex128</Word>
+			<Word>bool</Word>
+			<Word>string</Word>
+		</Keywords>
+
+		<!-- Комментарии -->
+		<Span color="Comment">
+			<Begin>//</Begin>
+		</Span>
+		<Span color="Comment" multiline="true">
+			<Begin>/\*</Begin>
+			<End>\*/</End>
+		</Span>
+
+		<!-- Строки (обычные и "сырые") -->
+		<Span color="String" multiline="true">
+			<Begin>"</Begin>
+			<End>"</End>
+			<RuleSet>
+				<Span begin="\\" end="." />
+			</RuleSet>
+		</Span>
+		<Span color="String" multiline="true">
+			<Begin>`</Begin>
+			<End>`</End>
+		</Span>
+
+		<!-- Числа -->
+		<Rule color="Digits">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+	</RuleSet>
+</SyntaxDefinition>
