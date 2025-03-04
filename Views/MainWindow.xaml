@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         xmlns:helpers="clr-namespace:Compiler.Helpers"
         Icon="/Icons/go.ico"
-        Title="Создание функции языка Go" Height="450" Width="800" FontFamily="Arial">
+        Title="Создание функции языка Go" Height="450" Width="800" FontFamily="Arial" Closing="Window_Closing">
 
     <Window.DataContext>
         <vm:MainViewModel />
