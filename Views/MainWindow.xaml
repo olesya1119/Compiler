@@ -127,6 +127,7 @@
                                   HorizontalScrollBarVisibility="Auto"
                                   Padding="5"
                                   helpers:AvalonEditHelper.Text="{Binding TextContent, UpdateSourceTrigger=PropertyChanged}"
+                                                   SyntaxHighlighting="go"
                                   Loaded="TextEditor_Loaded"
                                   TextChanged="TextEditor_TextChanged"/>
                         </DataTemplate>

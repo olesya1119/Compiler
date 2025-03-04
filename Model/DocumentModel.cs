@@ -8,7 +8,6 @@ namespace Compiler.Model
         private string _fileName;
         private string _filePath;
         private string _textContent;
-        private TextEditor _editor;
         private ObservableCollection<ErrorModel> _errors = new ObservableCollection<ErrorModel>();
 
         public string FileName
@@ -29,12 +28,7 @@ namespace Compiler.Model
             set { _textContent = value; OnPropertyChanged(); }
         }
 
-        public TextEditor Editor
-        {
-            get => _editor;
-            set { _editor = value; OnPropertyChanged(); }
-        }
-
+       
         public ObservableCollection<ErrorModel> Errors
         {
             get => _errors;

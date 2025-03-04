@@ -1,6 +1,11 @@
-﻿using System.Windows;
-using Compiler.ViewModel;
+﻿using System.Linq;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Input;
+using System.Xml;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 
 namespace Compiler
 {
@@ -9,6 +14,23 @@ namespace Compiler
         public MainWindow()
         {
             InitializeComponent();
+
+            // Загружаем и регистрируем подсветку Go из ресурса
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Compiler.GoMode.xshd"))
+            {
+                if (stream != null)
+                {
+                    using (var reader = new XmlTextReader(stream))
+                    {
+                        var highlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                        HighlightingManager.Instance.RegisterHighlighting("Go", new[] { ".go" }, highlighting);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Не удалось загрузить GoMode.xshd. Проверь путь к ресурсу.");
+                }
+            }
         }
 
         private void TextEditor_Loaded(object sender, RoutedEventArgs e)
@@ -18,21 +40,25 @@ namespace Compiler
                 var doc = vm.DocumentsVM.SelectedDocument;
                 if (doc != null)
                 {
-                    doc.Editor = editor; // Связываем редактор с моделью
+                    vm.DocumentsVM.Editor = editor;
+                    editor.Text = doc.TextContent;
+                    editor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("Go"); // Используем Go
                 }
             }
         }
 
         private void TextEditor_TextChanged(object sender, System.EventArgs e)
         {
-            if (sender is TextEditor editor && DataContext is MainViewModel vm)
+            if (sender is TextEditor editor && DataContext is ViewModel.MainViewModel vm)
             {
                 var doc = vm.DocumentsVM.SelectedDocument;
-                if (doc != null && editor.Text != doc.TextContent)
+                if (doc != null)
                 {
-                    doc.TextContent = editor.Text; // Обновляем модель
+                    doc.TextContent = editor.Text;
                 }
             }
         }
     }
+
+    
 }

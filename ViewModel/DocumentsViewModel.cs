@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows.Input;
 using Microsoft.Win32;
 using Compiler.Model;
+using ICSharpCode.AvalonEdit;
 
 namespace Compiler.ViewModel
 {
@@ -11,6 +12,8 @@ namespace Compiler.ViewModel
         private DocumentModel _selectedDocument;
 
         public ObservableCollection<DocumentModel> OpenDocuments { get; set; } = new ObservableCollection<DocumentModel>();
+
+        private TextEditor _editor;
 
         public DocumentModel SelectedDocument
         {
@@ -38,6 +41,12 @@ namespace Compiler.ViewModel
             SaveDocumentCommand = new RelayCommand(SaveDocument);
             SaveDocumentAsCommand = new RelayCommand(SaveDocumentAs);
             CloseDocumentCommand = new RelayCommand(CloseDocument);
+        }
+
+        public TextEditor Editor
+        {
+            get => _editor;
+            set { _editor = value; OnPropertyChanged(); }
         }
 
         private void NewDocument(object parameter)

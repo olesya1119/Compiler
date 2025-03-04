@@ -12,7 +12,7 @@ namespace Compiler.ViewModel
 
         public ObservableCollection<ErrorModel> Errors => DocumentsVM.SelectedErrors;
 
-        private TextEditor SelectedTextEditor() => DocumentsVM.SelectedDocument?.Editor;
+        private TextEditor SelectedTextEditor() => DocumentsVM.Editor;
 
         public MainViewModel()
         {
