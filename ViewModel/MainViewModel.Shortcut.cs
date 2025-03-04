@@ -47,7 +47,7 @@ namespace Compiler.ViewModel
         private void ExecuteCut(object parameter)
         {
             var editor = SelectedTextEditor();
-            if (editor != null && editor.SelectionLength > 0)
+            if (editor != null)
             {
                 editor.Cut();
             }
@@ -56,7 +56,7 @@ namespace Compiler.ViewModel
         private void ExecuteCopy(object parameter)
         {
             var editor = SelectedTextEditor();
-            if (editor != null && editor.SelectionLength > 0)
+            if (editor != null)
             {
                 editor.Copy();
             }
