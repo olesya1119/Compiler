@@ -1,50 +1,36 @@
-﻿using Compiler.Model;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
-
+using Compiler.Model;
+using ICSharpCode.AvalonEdit;
 
 namespace Compiler.ViewModel
 {
     public partial class MainViewModel : BaseViewModel
     {
-
-        ///<summary> ViewModel для работы с документами </summary>
         public DocumentsViewModel DocumentsVM { get; private set; }
 
-        ///<summary> Список ошибок в текщем документе </summary>
         public ObservableCollection<ErrorModel> Errors => DocumentsVM.SelectedErrors;
 
-        ///<summary> Выбранный RichTextBox </summary>
-        private RichTextBox SelectedRichTextBox() => DocumentsVM.SelectedDocument?.Editor;
+        private TextEditor SelectedTextEditor() => DocumentsVM.SelectedDocument?.Editor;
 
         public MainViewModel()
         {
             DocumentsVM = new DocumentsViewModel();
 
-            // Подписываемся на изменение выбранного документа (обновляем список ошибок)
-            DocumentsVM.PropertyChanged += (object sender, PropertyChangedEventArgs e) => {
+            DocumentsVM.PropertyChanged += (sender, e) =>
+            {
                 if (e.PropertyName == nameof(DocumentsVM.SelectedDocument))
                 {
-                    OnPropertyChanged(nameof(Errors)); // Теперь DataGrid обновится
+                    OnPropertyChanged(nameof(Errors));
                 }
             };
 
-            //Инцилизируем все команды
             InitAnalysisCommand();
             InitShortcutCommand();
             InitTextEditingCommand();
             InitInfoCommand();
         }
 
-        
     }
 }

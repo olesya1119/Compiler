@@ -1,12 +1,9 @@
-﻿using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Input;
+﻿using System.Windows.Input;
+using ICSharpCode.AvalonEdit;
 
 namespace Compiler.ViewModel
 {
-
-    // Часть класса для обработки команд горячих клавиш
-    public partial class MainViewModel 
+    public partial class MainViewModel
     {
         public ICommand ExitApplicationCommand { get; private set; }
         public ICommand UndoCommand { get; private set; }
@@ -17,8 +14,8 @@ namespace Compiler.ViewModel
         public ICommand DeleteCommand { get; private set; }
         public ICommand SelectAllCommand { get; private set; }
 
-
-        private void InitShortcutCommand() {
+        private void InitShortcutCommand()
+        {
             ExitApplicationCommand = new RelayCommand(ExitApplication);
             UndoCommand = new RelayCommand(ExecuteUndo);
             RedoCommand = new RelayCommand(ExecuteRedo);
@@ -29,24 +26,73 @@ namespace Compiler.ViewModel
             SelectAllCommand = new RelayCommand(ExecuteSelectAll);
         }
 
-        private void ExecuteUndo(object parameter) => SelectedRichTextBox()?.Undo();
-        private void ExecuteRedo(object parameter) => SelectedRichTextBox()?.Redo();
-        private void ExecuteCut(object parameter) => SelectedRichTextBox()?.Cut();
-        private void ExecuteCopy(object parameter) => SelectedRichTextBox()?.Copy();
-        private void ExecutePaste(object parameter) => SelectedRichTextBox()?.Paste();
-        private void ExecuteSelectAll(object parameter) => SelectedRichTextBox()?.SelectAll();
+        private void ExecuteUndo(object parameter)
+        {
+            var editor = SelectedTextEditor();
+            if (editor != null && editor.CanUndo)
+            {
+                editor.Undo();
+            }
+        }
+
+        private void ExecuteRedo(object parameter)
+        {
+            var editor = SelectedTextEditor();
+            if (editor != null && editor.CanRedo)
+            {
+                editor.Redo();
+            }
+        }
+
+        private void ExecuteCut(object parameter)
+        {
+            var editor = SelectedTextEditor();
+            if (editor != null && editor.SelectionLength > 0)
+            {
+                editor.Cut();
+            }
+        }
+
+        private void ExecuteCopy(object parameter)
+        {
+            var editor = SelectedTextEditor();
+            if (editor != null && editor.SelectionLength > 0)
+            {
+                editor.Copy();
+            }
+        }
+
+        private void ExecutePaste(object parameter)
+        {
+            var editor = SelectedTextEditor();
+            if (editor != null)
+            {
+                editor.Paste();
+            }
+        }
 
         private void ExecuteDelete(object parameter)
         {
-            var richTextBox = SelectedRichTextBox();
-            if (richTextBox != null)
+            var editor = SelectedTextEditor();
+            if (editor != null && editor.SelectionLength > 0)
             {
-                EditingCommands.Delete.Execute(null, richTextBox);
+                editor.SelectedText = ""; // Удаляем выделенный текст
+            }
+        }
+
+        private void ExecuteSelectAll(object parameter)
+        {
+            var editor = SelectedTextEditor();
+            if (editor != null)
+            {
+                editor.SelectAll();
             }
         }
 
         /// <summary> Обработчик события для выхода из программы </summary>
-        private void ExitApplication(object parameter) => Application.Current.Shutdown();
-
+        private void ExitApplication(object parameter)
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
     }
 }

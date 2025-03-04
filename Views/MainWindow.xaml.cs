@@ -1,19 +1,6 @@
-﻿using Compiler.Model;
+﻿using System.Windows;
 using Compiler.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using ICSharpCode.AvalonEdit;
 
 namespace Compiler
 {
@@ -22,31 +9,30 @@ namespace Compiler
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
         }
 
-        private void RichTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextEditor_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is RichTextBox richTextBox)
+            if (sender is TextEditor editor && DataContext is ViewModel.MainViewModel vm)
             {
-                foreach (Block block in richTextBox.Document.Blocks)
+                var doc = vm.DocumentsVM.SelectedDocument;
+                if (doc != null)
                 {
-                    if (block is Paragraph paragraph)
-                    {
-                        paragraph.Margin = new Thickness(0);
-                    }
+                    doc.Editor = editor; // Связываем редактор с моделью
                 }
             }
         }
 
-        private void RichTextBox_Loaded(object sender, RoutedEventArgs e)
+        private void TextEditor_TextChanged(object sender, System.EventArgs e)
         {
-            if (sender is RichTextBox richTextBox && richTextBox.DataContext is DocumentModel doc)
+            if (sender is TextEditor editor && DataContext is MainViewModel vm)
             {
-                doc.Editor = richTextBox;
+                var doc = vm.DocumentsVM.SelectedDocument;
+                if (doc != null && editor.Text != doc.TextContent)
+                {
+                    doc.TextContent = editor.Text; // Обновляем модель
+                }
             }
         }
-
-
     }
 }
