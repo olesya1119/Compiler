@@ -1,72 +1,119 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Controls;
-using System.Windows.Documents;
+﻿using ICSharpCode.AvalonEdit;
+using System.Collections.ObjectModel;
+using System.IO;
 
 namespace Compiler.Model
 {
-    /// <summary> Модель представляющая документ </summary>
+    /// <summary> Модель, представляющая документ </summary>
     public class DocumentModel : BaseModel
     {
-     
-        private string _fileName; 
-        private string _filePath; 
-        private FlowDocument _document;  
-        private RichTextBox _editor;
+        private FileInfo _fileInfo;  // Используем FileInfo для работы с файлом
+        private string _textContent;
+        private TextEditor _editor;
         private ObservableCollection<ErrorModel> _errors = new ObservableCollection<ErrorModel>();
+
+        /// <summary> Информация о файле </summary>
+        public FileInfo FileInfo
+        {
+            get => _fileInfo;
+            set { _fileInfo = value; OnPropertyChanged(); }
+        }
 
         /// <summary> Название файла </summary>
         public string FileName
         {
-            get => _fileName;
-            set { _fileName = value; OnPropertyChanged(); }
+            get => _fileInfo?.Name;
+            set
+            {
+                if (_fileInfo != null && _fileInfo.Name != value)
+                {
+                    // Обновляем имя файла в _fileInfo
+                    _fileInfo = new FileInfo(Path.Combine(_fileInfo.DirectoryName, value));
+                    OnPropertyChanged();
+                }
+            }
         }
 
         /// <summary> Путь к файлу </summary>
         public string FilePath
         {
-            get => _filePath;
-            set { _filePath = value; OnPropertyChanged(); }
+            get => _fileInfo?.FullName;
+            set
+            {
+                if (_fileInfo != null && _fileInfo.FullName != value)
+                {
+                    // Обновляем путь в _fileInfo
+                    _fileInfo = new FileInfo(value);
+                    OnPropertyChanged();
+                }
+            }
         }
 
-        /// <summary> Документ </summary>
-        public FlowDocument Document
+        /// <summary> Внутреннее содержание документа </summary>
+        public string TextContent
         {
-            get => _document;
-            set { _document = value; OnPropertyChanged(); }
+            get => _textContent;
+            set
+            {
+                if (_textContent != value)
+                {
+                    _textContent = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
-        /// <summary> RichTextBox в которым открыт этот документ </summary>
-        public RichTextBox Editor
+        /// <summary> AvalonEdit TextEditor для документа </summary>
+        public TextEditor Editor
         {
             get => _editor;
-            set { _editor = value; OnPropertyChanged(); }
+            set
+            {
+                _editor = value;
+                OnPropertyChanged();
+                if (_editor != null)
+                {
+                    _editor.TextChanged += (s, e) => TextContent = _editor.Text;
+                }
+            }
         }
 
-        /// <summary> Список ошибок </summary>
+        /// <summary> Список ошибок в документе </summary>
         public ObservableCollection<ErrorModel> Errors
         {
             get => _errors;
             set { _errors = value; OnPropertyChanged(); }
         }
 
-        /// <summary> Добавление новой ошибки. </summary>
+        /// <summary> Добавить ошибку в документ </summary>
         public void AddError(int line, int column, string message)
         {
-            Errors.Add(new ErrorModel(_errors.Count + 1, _fileName, line, column, message));
+            Errors.Add(new ErrorModel(Errors.Count + 1, FileName, line, column, message));
             OnPropertyChanged(nameof(Errors));
         }
 
-
-
-        /// <summary> Модель представляющая документ. </summary>
-        public DocumentModel(string fileName)
+        /// <summary> Конструктор модели документа </summary>
+        public DocumentModel(string filePath)
         {
-            FileName = fileName;
-            Document = new FlowDocument(new Paragraph(new Run("")));
+            FileInfo = new FileInfo(filePath);
         }
 
-        
+        /// <summary> Загрузка текста из файла </summary>
+        public void LoadTextFromFile()
+        {
+            if (FileInfo.Exists)
+            {
+                TextContent = File.ReadAllText(FileInfo.FullName);
+            }
+        }
+
+        /// <summary> Сохранение текста в файл </summary>
+        public void SaveTextToFile()
+        {
+            if (FileInfo.Exists)
+            {
+                File.WriteAllText(FileInfo.FullName, TextContent);
+            }
+        }
     }
 }

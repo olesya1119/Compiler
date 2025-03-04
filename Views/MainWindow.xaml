@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Compiler"
         xmlns:vm="clr-namespace:Compiler.ViewModel"
-        xmlns:helpers="clr-namespace:Compiler.Helpers"
+        xmlns:helpers="clr-namespace:Compiler.Helpers" xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
         mc:Ignorable="d"
         Icon="/Icons/go.ico"
         Title="Создание функции языка Go" Height="450" Width="800" FontFamily="Arial">
@@ -13,7 +13,6 @@
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
-
 
     <Grid Background="#3FF1DCDC">
         <DockPanel>
@@ -92,68 +91,29 @@
                 </Button>
             </ToolBar>
 
+            <TabControl ItemsSource="{Binding DocumentsVM.OpenDocuments}" 
+            SelectedItem="{Binding DocumentsVM.SelectedDocument}">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding FileName}" Margin="5,0"/>
+                            <Button Background="Transparent" BorderThickness="0"
+                        Command="{Binding DataContext.DocumentsVM.CloseDocumentCommand, RelativeSource={RelativeSource AncestorType=TabControl}}" 
+                        CommandParameter="{Binding}">
+                                <Image Source="/Icons/close.png" Width="16" Height="16"/>
+                            </Button>
+                        </StackPanel>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
 
-            <!-- Главный контейнер -->
-            <Grid DockPanel.Dock="Top">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="5"/>
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <!-- Этот элемент будет пустым, мы добавим редактор через код -->
+                        <Grid Name="EditorContainer" />
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
 
-                <!-- Вкладки с документами -->
-                <TabControl ItemsSource="{Binding DocumentsVM.OpenDocuments}" 
-                SelectedItem="{Binding DocumentsVM.SelectedDocument}"
-                Grid.Row="0">
-                    <TabControl.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding FileName}" Margin="5,0"/>
-                                <Button Background="Transparent" BorderThickness="0"
-                                    Command="{Binding DataContext.DocumentsVM.CloseDocumentCommand, RelativeSource={RelativeSource AncestorType=TabControl}}" 
-                                    CommandParameter="{Binding}">
-                                    <Image Source="/Icons/close.png" Width="16" Height="16"/>
-                                </Button>
-                            </StackPanel>
-                        </DataTemplate>
-                    </TabControl.ItemTemplate>
-
-                    <TabControl.ContentTemplate>
-                        <DataTemplate>
-                            <RichTextBox FontFamily="Consolas"
-                                BorderThickness="0"
-                                FontSize="14"
-                                AcceptsReturn="True"
-                                VerticalScrollBarVisibility="Auto"
-                                HorizontalScrollBarVisibility="Auto"
-                                Padding="5"
-                                Loaded="RichTextBox_Loaded"
-                                TextChanged="RichTextBox_TextChanged"
-                                helpers:RichTextBoxHelper.BoundDocument="{Binding Document}"/>
-                        </DataTemplate>
-                    </TabControl.ContentTemplate>
-                </TabControl>
-
-                <!-- Разделитель -->
-                <GridSplitter Grid.Row="1" Height="3" Background="#8785a2" HorizontalAlignment="Stretch"/>
-
-                <DataGrid ItemsSource="{Binding Errors}"
-                    AutoGenerateColumns="False"
-                    Grid.Row="2"
-                    SelectionMode="Single"
-                    IsReadOnly="True"
-                    Background="#7FF3E0E0">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="№" Binding="{Binding Number}" Width="40"/>
-                        <DataGridTextColumn Header="Файл" Binding="{Binding FileName}" Width="150"/>
-                        <DataGridTextColumn Header="Строка" Binding="{Binding Line}" Width="60"/>
-                        <DataGridTextColumn Header="Столбец" Binding="{Binding Column}" Width="60"/>
-                        <DataGridTextColumn Header="Сообщение" Binding="{Binding Message}" Width="*" />
-                    </DataGrid.Columns>
-                </DataGrid>
-
-
-            </Grid>
 
 
         </DockPanel>

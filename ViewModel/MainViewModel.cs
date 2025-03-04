@@ -1,4 +1,5 @@
 ﻿using Compiler.Model;
+using ICSharpCode.AvalonEdit;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,8 +24,8 @@ namespace Compiler.ViewModel
         ///<summary> Список ошибок в текщем документе </summary>
         public ObservableCollection<ErrorModel> Errors => DocumentsVM.SelectedErrors;
 
-        ///<summary> Выбранный RichTextBox </summary>
-        private RichTextBox SelectedRichTextBox() => DocumentsVM.SelectedDocument?.Editor;
+        ///<summary> Выбранный TextEditor </summary>
+        private TextEditor SelectedTextEditor() => DocumentsVM.SelectedDocument?.Editor;
 
         public MainViewModel()
         {
@@ -40,7 +41,7 @@ namespace Compiler.ViewModel
 
             //Инцилизируем все команды
             InitAnalysisCommand();
-            InitShortcutCommand();
+            //InitShortcutCommand();
             InitTextEditingCommand();
             InitInfoCommand();
         }

@@ -17,7 +17,7 @@ namespace Compiler.ViewModel
         public ICommand DeleteCommand { get; private set; }
         public ICommand SelectAllCommand { get; private set; }
 
-
+        /*
         private void InitShortcutCommand() {
             ExitApplicationCommand = new RelayCommand(ExitApplication);
             UndoCommand = new RelayCommand(ExecuteUndo);
@@ -29,6 +29,7 @@ namespace Compiler.ViewModel
             SelectAllCommand = new RelayCommand(ExecuteSelectAll);
         }
 
+        
         private void ExecuteUndo(object parameter) => SelectedRichTextBox()?.Undo();
         private void ExecuteRedo(object parameter) => SelectedRichTextBox()?.Redo();
         private void ExecuteCut(object parameter) => SelectedRichTextBox()?.Cut();
@@ -47,6 +48,6 @@ namespace Compiler.ViewModel
 
         /// <summary> Обработчик события для выхода из программы </summary>
         private void ExitApplication(object parameter) => Application.Current.Shutdown();
-
+        */
     }
 }
