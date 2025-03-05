@@ -25,6 +25,7 @@ namespace Compiler.Views
         }
 
         public bool SaveChanges { get; private set; } = false;
+        public bool CloseMain { get; private set; } = false;
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {

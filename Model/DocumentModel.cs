@@ -14,16 +14,21 @@ namespace Compiler.Model
 
         public string FileName
         {
-            get => _fileName;
+            get
+            {
+                if (_status)
+                {
+                    return "* " + _fileName;
+                }
+                return _fileName;
+            }
             set
             {
                 if (_fileName != value)
                 {
                     _fileName = value;
+                    OnPropertyChanged();
                     OnPropertyChanged(nameof(FileName));
-
-                    // Обновляем ошибки после изменения имени файла
-                    RefreshErrors();
                 }
             }
         }
@@ -31,15 +36,10 @@ namespace Compiler.Model
         public string FilePath
         {
             get => _filePath;
-            set
-            {
-                if (_filePath != value)
-                {
-                    _filePath = value;
-                    OnPropertyChanged(nameof(FilePath));
-                }
-            }
+            set { _filePath = value; OnPropertyChanged(); }
         }
+
+
 
         public bool Status
         {
@@ -50,7 +50,7 @@ namespace Compiler.Model
                 {
                     _status = value;
                     OnPropertyChanged(nameof(Status));
-                    OnPropertyChanged(nameof(FileName)); // Перезагружаем имя файла с возможной звездочкой
+                    OnPropertyChanged(nameof(FileName)); // Обновляем имя файла, когда статус меняется
                 }
             }
         }
@@ -64,8 +64,8 @@ namespace Compiler.Model
                 {
                     _textContent = value;
                     Status = true; // Документ изменен
-                    OnPropertyChanged(nameof(TextContent));
-                    OnPropertyChanged(nameof(FileName)); // Обновляем имя файла, если оно изменилось
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(FileName)); // Обновляем название файла
                 }
             }
         }
@@ -98,10 +98,13 @@ namespace Compiler.Model
             OnPropertyChanged(nameof(Errors));
         }
 
-        public DocumentModel(string fileName)
+        public DocumentModel(string fileName, string filePath = null)
         {
             FileName = fileName;
+            FilePath = filePath;
             TextContent = "";
+            Status = true;
+            
         }
     }
 }
