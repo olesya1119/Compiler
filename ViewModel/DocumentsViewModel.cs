@@ -64,7 +64,9 @@ namespace Compiler.ViewModel
                 string content = File.ReadAllText(openFileDialog.FileName);
                 var doc = new DocumentModel(Path.GetFileName(openFileDialog.FileName))
                 {
-                    TextContent = content
+                    TextContent = content,
+                    FilePath = openFileDialog.FileName, // Добавляем присваивание FilePath
+                    Status = false // Файл только что открыт, изменений нет
                 };
                 OpenDocuments.Add(doc);
                 SelectedDocument = doc;
@@ -73,9 +75,7 @@ namespace Compiler.ViewModel
 
         private void SaveDocument(object parameter)
         {
-            
             if (SelectedDocument == null) return;
-            SelectedDocument.Status = false;
 
             if (string.IsNullOrEmpty(SelectedDocument.FilePath))
             {
@@ -84,20 +84,21 @@ namespace Compiler.ViewModel
             else
             {
                 File.WriteAllText(SelectedDocument.FilePath, SelectedDocument.TextContent);
+                SelectedDocument.Status = false; // После сохранения изменений нет
             }
         }
 
         private void SaveDocumentAs(object parameter)
         {
             if (SelectedDocument == null) return;
-            SelectedDocument.Status = false;
 
             SaveFileDialog saveFileDialog = new SaveFileDialog { Filter = "Текстовые файлы|*.txt|Все файлы|*.*" };
             if (saveFileDialog.ShowDialog() == true)
             {
                 File.WriteAllText(saveFileDialog.FileName, SelectedDocument.TextContent);
-                SelectedDocument.FilePath = saveFileDialog.FileName;
+                SelectedDocument.FilePath = saveFileDialog.FileName; // Убеждаемся, что FilePath обновляется
                 SelectedDocument.FileName = Path.GetFileName(saveFileDialog.FileName);
+                SelectedDocument.Status = false; // После сохранения изменений нет
             }
         }
 

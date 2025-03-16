@@ -15,6 +15,17 @@
         <vm:MainViewModel />
     </Window.DataContext>
 
+    <!-- Привязка горячих клавиш -->
+    <Window.InputBindings>
+        <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding NewDocumentCommand}" />
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{Binding OpenDocumentCommand}" />
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveDocumentCommand}" />
+        <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{Binding SaveDocumentAsCommand}" />
+        <KeyBinding Key="F4" Modifiers="Alt" Command="{Binding ExitApplicationCommand}" />
+        <KeyBinding Key="F5" Command="{Binding StartExecutionCommand}" />
+        <KeyBinding Key="F1" Command="{Binding ShowHelpCommand}" />
+    </Window.InputBindings>
+
     <Grid Background="#3FF1DCDC">
         <DockPanel>
             <!-- Главное меню -->
@@ -108,7 +119,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding FileName}" Margin="5,0"/>
-                                <Button Background="Transparent" BorderThickness="0"
+                                <Button Background="Transparent" BorderThickness="0" Click="Button_Click"
                                         Command="{Binding DataContext.DocumentsVM.CloseDocumentCommand, RelativeSource={RelativeSource AncestorType=TabControl}}" 
                                         CommandParameter="{Binding}">
                                     <Image Source="/Icons/close.png" Width="16" Height="16"/>

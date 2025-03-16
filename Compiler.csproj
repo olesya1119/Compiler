@@ -82,7 +82,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Helpers\AvalonEditHelper.cs" />
-    <Compile Include="Helpers\RichTextBoxHelper.cs" />
     <Compile Include="Model\BaseModel.cs" />
     <Compile Include="Model\DocumentModel.cs" />
     <Compile Include="Model\ErrorModel.cs" />

@@ -65,8 +65,8 @@ namespace Compiler
             if (DataContext is ViewModel.MainViewModel vm && vm.DocumentsVM.SelectedDocument != null && vm.DocumentsVM.SelectedDocument.Status) // если документ изменен
             {
                 var confirmWindow = new ConfirmExitWindow();
-                confirmWindow.Owner = this; // Устанавливаем владельцем главное окно
-                confirmWindow.ShowDialog(); // Показываем окно подтверждения
+                confirmWindow.Owner = this; 
+                confirmWindow.ShowDialog();
 
                 if (confirmWindow.SaveChanges)
                 {
@@ -78,6 +78,22 @@ namespace Compiler
                     e.Cancel = false;
                 }
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ViewModel.MainViewModel vm && vm.DocumentsVM.SelectedDocument != null && vm.DocumentsVM.SelectedDocument.Status) // если документ изменен
+            {
+                var confirmWindow = new ConfirmExitWindow();
+                confirmWindow.Owner = this;
+                confirmWindow.ShowDialog();
+
+                if (confirmWindow.SaveChanges)
+                {
+                    vm.SaveDocumentCommand.Execute(null); // Сохраняем документ
+                }
+            }
+
         }
     }
 
