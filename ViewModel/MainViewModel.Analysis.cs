@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Compiler.Analysis;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -89,7 +90,13 @@ namespace Compiler.ViewModel
         {
             if (DocumentsVM.SelectedDocument != null)
             {
-                DocumentsVM.AddError(3, 1, "Опачки");
+                Scaner scaner = new Scaner();
+                DocumentsVM.SelectedErrors.Clear();
+                var result = scaner.Parse(DocumentsVM.SelectedDocument.TextContent);
+                foreach (var e in result)
+                {
+                    DocumentsVM.AddError(e.Line, e.StartColumn, e.ToString());
+                }
                 OnPropertyChanged(nameof(Errors));
             }
         }

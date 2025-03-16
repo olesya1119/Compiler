@@ -30,5 +30,9 @@ namespace Compiler.Analysis
         public int StartColumn => _startColumn;
         public int EndColumn => _endColumn;
 
+        public override string ToString() {
+            return $"{(int)_code} - {_code} - {_token} - с {_startColumn} по {_endColumn} символ";
+        }
+
     }
 }
