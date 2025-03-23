@@ -55,16 +55,30 @@ namespace Compiler.Analysis
                 var token = "";
                 int startColumn = currentColumn + 1; // Начало токена
 
-                // Пропускаем пробелы и новые строки
+                // Пропускаем пробелы
                 if (text[i] == ' ')
                 {
                     currentColumn++;
                     continue;
                 }
-                else if (text[i] == '\n' || text[i] == '\r')
+
+                // Обработка символов перевода строки и табуляции
+                if (text[i] == '\n' || text[i] == '\r' || text[i] == '\t')
                 {
+                    // Обработка комбинации \r\n (одна строка)
+                    if (text[i] == '\r' && i + 1 < text.Length && text[i + 1] == '\n')
+                    {
+                        i++; // Пропускаем \n
+                    }
+
+                    
+                    // Увеличиваем счетчик строк и сбрасываем текущий столбец
                     line++;
                     currentColumn = 0;
+                    if (text[i] == '\t')
+                    {
+                        currentColumn = 4;
+                    }
                     continue;
                 }
 

@@ -1,4 +1,5 @@
 ﻿using Compiler.Analysis;
+using Compiler.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,9 +94,13 @@ namespace Compiler.ViewModel
                 Scaner scaner = new Scaner();
                 DocumentsVM.SelectedErrors.Clear();
                 var result = scaner.Parse(DocumentsVM.SelectedDocument.TextContent);
-                foreach (var e in result)
+
+                Parser parser = new Parser(result);
+                parser.Parse();
+
+                foreach (var e in parser.Errors)
                 {
-                    DocumentsVM.AddError(e.Line, e.StartColumn, e.ToString());
+                    DocumentsVM.AddError(e.Token.Line, e.Token.StartColumn, e.Message);
                 }
                 OnPropertyChanged(nameof(Errors));
             }

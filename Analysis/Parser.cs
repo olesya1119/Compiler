@@ -7,204 +7,384 @@ using System.Threading.Tasks;
 
 namespace Compiler.Analysis
 {
-    enum ErrorType { DELETE, REPLACE, PUSH}
-
-    class Parser
+    public class ErrorEntry
     {
-        /*
-        private List<Token> tokens;
-        private int i = 0;
-        private List<ErrorModel> errors;
+        public string Message { get; set; }
+        public Token Token { get; set; }
 
-        private Token token => tokens[i];
-
-        public Parser(List<Token> tokens) {
-            this.tokens = tokens;
-            errors = new List<ErrorModel>();
-            Func();
-        }
-
-        private void Func(){
-            if (token.Code == CODE.FUNC) SpaceAfterFunc();
-
-            else 
-            { 
-                
-            }
-        }
-
-
-        private void SpaceAfterFunc()
+        public ErrorEntry(string message, Token token)
         {
-            i++;
-            if (token.Code == CODE.DELIMITER) FuncName();
- 
-            else
-            {
-
-            }
+            Message = message;
+            this.Token = token;
         }
-
-        private void FuncName()
-        {
-            i++;
-            if (token.Code == CODE.IDENTIFIER) AfterFuncName();
-
-            else
-            {
-
-            }
-        }
-
-        private void AfterFuncName()
-        {
-            i++; 
-            if (token.Code == CODE.LPAREN) Arguments();
-
-            else
-            {
-
-            }
-        }
-
-        private void Arguments()
-        {
-            i++;
-            int 
-            if (ParamsList())
-            {
-                ArgumentsEnd();
-            }
-            else
-            {
-                ArgumentsEnd();
-            }
-        }
-
-        private bool ParamsList()
-        {
-            return false
-        }
-
-        private void ArgumentsEnd()
-        {
-
-        }*/
-
-        private List<Token> tokens;
+    }
+    public class Parser
+    {
+        private List<Token> _tokens;
+        private int _currentTokenIndex;
+        private List<ErrorEntry> _errors;
 
         public Parser(List<Token> tokens)
         {
-            this.tokens = tokens;
+            _tokens = tokens;
+            _currentTokenIndex = 0;
+            _errors = new List<ErrorEntry>();
         }
 
-
-
-        /// <summary> 1) FUNC -> "func" SPACE_AFTER_FUNC </summary>
-        private List<ErrorModel> Func(int pos, List<ErrorModel> errors)
+        public void Parse()
         {
-            if (isAtEnd(pos)) return errors;
-
-            // Все окей
-            if (tokens[pos].Code == CODE.FUNC) return SpaceAfterFunc(pos + 1, errors);
-
-            // Все не окей, пробуем 3 способа нейтрализации
-            return minErrorsList(
-                Func(pos + 1, AddError(errors, GetError(pos, tokens[pos], ErrorType.DELETE))),
-                SpaceAfterFunc(pos + 1, AddError(errors, GetError(pos, tokens[pos], ErrorType.PUSH))),
-                SpaceAfterFunc(pos, AddError(errors, GetError(pos, tokens[pos], ErrorType.PUSH)))
-                );
+            RemoveUnknownSymbols();
+            FUNC();
         }
 
-        /// <summary> 2) SPACE_AFTER_FUN -> " " FUNC_NAME </summary>
-        private List<ErrorModel> SpaceAfterFunc(int pos, List<ErrorModel> errors)
+        private void RemoveUnknownSymbols()
         {
-            if (isAtEnd(pos)) return errors;
-
-            // Все окей
-            if (tokens[pos].Code == CODE.DELIMITER) return SpaceAfterFunc(pos + 1, errors);
-
-            // Все не окей, пробуем 3 способа нейтрализации
-            return minErrorsList(
-                SpaceAfterFunc(pos + 1, AddError(errors, GetError(pos, tokens[pos], ErrorType.DELETE))),
-                FuncName(pos + 1, AddError(errors, GetError(pos, tokens[pos], ErrorType.PUSH))),
-                FuncName(pos, AddError(errors, GetError(pos, tokens[pos], ErrorType.PUSH)))
-                );
-        }
-
-        /// <summary> 3) FUNC_NAME -> IDENTIFIER AFTER_FUNC_NAME </summary>
-        private List<ErrorModel> FuncName(int pos, List<ErrorModel> errors)
-        {
-            if (isAtEnd(pos)) return errors;
-
-            // Все окей
-            if (tokens[pos].Code == CODE.IDENTIFIER) return AfterFuncName(pos + 1, errors);
-
-            // Все не окей, пробуем 3 способа нейтрализации
-            return minErrorsList(
-                FuncName(pos + 1, AddError(errors, GetError(pos, tokens[pos], ErrorType.DELETE))),
-                AfterFuncName(pos + 1, AddError(errors, GetError(pos, tokens[pos], ErrorType.PUSH))),
-                AfterFuncName(pos, AddError(errors, GetError(pos, tokens[pos], ErrorType.PUSH)))
-                );
-        }
-
-        /// <summary> 4) AFTER_FUNC_NAME -> "(" ARGUMENTS </summary>
-        private List<ErrorModel> AfterFuncName(int pos, List<ErrorModel> errors)
-        {
-            if (isAtEnd(pos)) return errors;
-
-            // Все окей
-            if (tokens[pos].Code == CODE.LPAREN) return Arguments(pos + 1, errors);
-
-            // Все не окей, пробуем 3 способа нейтрализации
-            return minErrorsList(
-                AfterFuncName(pos + 1, AddError(errors, GetError(pos, tokens[pos], ErrorType.DELETE))),
-                Arguments(pos + 1, AddError(errors, GetError(pos, tokens[pos], ErrorType.PUSH))),
-                Arguments(pos, AddError(errors, GetError(pos, tokens[pos], ErrorType.PUSH)))
-                );
-        }
-
-
-        /// <summary> 5) ARGUMENTS -> PARAMS_LIST ARGUMENTS_END> | ARGUMENTS_END </summary>
-        private List<ErrorModel> Arguments(int pos, List<ErrorModel> errors)
-        {
-
-        }
-
-
-
-
-        private List<ErrorModel> AddError(List<ErrorModel> errors, ErrorModel newError)
-        {
-            List<ErrorModel> newErrors = new List<ErrorModel>();
-            foreach (ErrorModel error in errors)
+            int i = 0;
+            while (i < _tokens.Count)
             {
-                newErrors.Add(error);
+                if (_tokens[i].Code == CODE.ERROR)
+                {
+                    // Начало последовательности неизвестных символов
+                    int startIndex = i;
+                    string unknownSequence = _tokens[i].TokenValue;
+                    i++;
+
+                    // Собираем все подряд идущие неизвестные символы
+                    while (i < _tokens.Count && _tokens[i].Code == CODE.ERROR)
+                    {
+                        unknownSequence += _tokens[i].TokenValue;
+                        i++;
+                    }
+
+                    // Добавляем одну ошибку для всей последовательности
+                    AddError($"Неизвестная последовательность символов: '{unknownSequence}' (Line: {_tokens[startIndex].Line}, Column: {_tokens[startIndex].StartColumn})");
+
+
+                    // Удаляем все токены из последовательности
+                    _tokens.RemoveRange(startIndex, i - startIndex);
+                    i = startIndex; // Возвращаемся к текущей позиции, так как список изменился
+                }
+                else
+                {
+                    i++;
+                }
             }
-            newErrors.Add(newError);
-            return newErrors;
         }
 
+        public List<ErrorEntry> Errors => _errors;
 
+        private Token CurrentToken => _currentTokenIndex < _tokens.Count ? _tokens[_currentTokenIndex] : null;
 
-        private bool isAtEnd(int currentPosition)
+        private void MoveNext()
         {
-            return currentPosition >= tokens.Count;
+            _currentTokenIndex++;
         }
 
-        private List<ErrorModel> minErrorsList(List<ErrorModel> e1, List<ErrorModel> e2, List<ErrorModel> e3)
+        private void AddError(string message)
         {
-            if (e1.Count <= e2.Count && e1.Count <= e3.Count) return e1;
-            if (e2.Count <= e3.Count) return e2;
-            return e3;
+            _errors.Add(new ErrorEntry($"Ошибка: {message}", CurrentToken));
         }
 
-
-        public static ErrorModel GetError(int pos, Token token, ErrorType errorType)
+        private void Match(CODE expectedCode)
         {
-            return new ErrorModel(1, "123", token.Line, token.StartColumn, token.TokenValue);
+            if (CurrentToken != null && CurrentToken.Code == expectedCode)
+            {
+                MoveNext();
+            }
+            else
+            {
+                AddError($"Ожидалось {expectedCode}, но найдено {CurrentToken?.Code}");
+                MoveNext(); // Пропускаем текущий токен и продолжаем
+            }
         }
 
+        private void FUNC()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.FUNC)
+            {
+                Match(CODE.FUNC);
+                SPACE_AFTER_FUNC();
+            }
+            else
+            {
+                AddError("Ожидалось ключевое слово 'func'");
+                SkipUntil(new[] { CODE.LBRACE, CODE.RBRACE });
+            }
+        }
+
+        private void SPACE_AFTER_FUNC()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.DELIMITER)
+            {
+                Match(CODE.DELIMITER);
+                FUNC_NAME();
+            }
+            else
+            {
+                AddError("Ожидался пробел после 'func'");
+                SkipUntil(new[] { CODE.LPAREN, CODE.LBRACE });
+            }
+        }
+
+        private void FUNC_NAME()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.IDENTIFIER)
+            {
+                Match(CODE.IDENTIFIER);
+                AFTER_FUNC_NAME();
+            }
+            else
+            {
+                AddError("Ожидался идентификатор имени функции");
+                SkipUntil(new[] { CODE.LPAREN, CODE.LBRACE });
+            }
+        }
+
+        private void AFTER_FUNC_NAME()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.LPAREN)
+            {
+                Match(CODE.LPAREN);
+                ARGUMENTS();
+            }
+            else
+            {
+                AddError("Ожидалось '(' после имени функции");
+                SkipUntil(new[] { CODE.LBRACE });
+            }
+        }
+
+        private void ARGUMENTS()
+        {
+            if (CurrentToken != null && CurrentToken.Code != CODE.RPAREN)
+            {
+                PARAMS_LIST();
+            }
+            ARGUMENTS_END();
+        }
+
+        private void PARAMS_LIST()
+        {
+            PARAMS_WITH_TYPE();
+            PARAMS_LIST_TAIL();
+        }
+
+        private void PARAMS_LIST_TAIL()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.COMMA)
+            {
+                Match(CODE.COMMA);
+                PARAMS_LIST();
+            }
+        }
+
+        private void PARAMS_WITH_TYPE()
+        {
+            PARAMS();
+            if (CurrentToken != null && CurrentToken.Code == CODE.DELIMITER)
+            {
+                Match(CODE.DELIMITER);
+                TYPE();
+            }
+            else
+            {
+                AddError("Ожидался пробел после параметра");
+                SkipUntil(new[] { CODE.COMMA, CODE.RPAREN });
+            }
+        }
+
+        private void PARAMS()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.IDENTIFIER)
+            {
+                Match(CODE.IDENTIFIER);
+                PARAMS_TAIL();
+            }
+            else
+            {
+                AddError("Ожидался идентификатор параметра");
+                SkipUntil(new[] { CODE.COMMA, CODE.RPAREN });
+            }
+        }
+
+        private void PARAMS_TAIL()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.COMMA)
+            {
+                Match(CODE.COMMA);
+                PARAMS();
+            }
+        }
+
+        private void ARGUMENTS_END()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.RPAREN)
+            {
+                Match(CODE.RPAREN);
+                RETURN_TYPE();
+            }
+            else
+            {
+                AddError("Ожидалось ')' после аргументов");
+                SkipUntil(new[] { CODE.LBRACE });
+            }
+        }
+
+        private void RETURN_TYPE()
+        {
+            TYPE();
+            AFTER_RETURN_TYPE();
+        }
+
+        private void AFTER_RETURN_TYPE()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.LBRACE)
+            {
+                Match(CODE.LBRACE);
+                FUNC_BODY();
+            }
+            else
+            {
+                AddError("Ожидалось '{' после типа возврата");
+                SkipUntil(new[] { CODE.RBRACE });
+            }
+        }
+
+        private void FUNC_BODY()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.RETURN)
+            {
+                Match(CODE.RETURN);
+                RETURN_VALUE();
+            }
+            else
+            {
+                AddError("Ожидалось ключевое слово 'return'");
+                SkipUntil(new[] { CODE.RBRACE });
+            }
+        }
+
+        private void RETURN_VALUE()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.DELIMITER)
+            {
+                Match(CODE.DELIMITER);
+                EXPRESSION_AFTER_RETURN();
+            }
+            else
+            {
+                AddError("Ожидался пробел после 'return'");
+                SkipUntil(new[] { CODE.RBRACE });
+            }
+        }
+
+        private void EXPRESSION_AFTER_RETURN()
+        {
+            EXPRESSION();
+            END_FUNC_BODY();
+        }
+
+        private void END_FUNC_BODY()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.RBRACE)
+            {
+                Match(CODE.RBRACE);
+                END();
+            }
+            else
+            {
+                AddError("Ожидалось '}' в конце тела функции");
+                SkipUntil(new[] { CODE.END });
+            }
+        }
+
+        private void END()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.END)
+            {
+                Match(CODE.END);
+            }
+            else
+            {
+                AddError("Ожидалось ';' в конце функции");
+            }
+        }
+
+        private void TYPE()
+        {
+            if (CurrentToken != null && (CurrentToken.Code == CODE.INT || CurrentToken.Code == CODE.UINT || CurrentToken.Code == CODE.FLOAT32 || CurrentToken.Code == CODE.FLOAT64))
+            {
+                Match(CurrentToken.Code);
+            }
+            else
+            {
+                AddError("Ожидался тип (int, uint, float32, float64)");
+                SkipUntil(new[] { CODE.LBRACE, CODE.RPAREN });
+            }
+        }
+
+        private void EXPRESSION()
+        {
+            TERM();
+            A();
+        }
+
+        private void A()
+        {
+            if (CurrentToken != null && (CurrentToken.Code == CODE.PLUS || CurrentToken.Code == CODE.MINUS))
+            {
+                Match(CurrentToken.Code);
+                TERM();
+                A();
+            }
+        }
+
+        private void TERM()
+        {
+            OPERAND();
+            B();
+        }
+
+        private void B()
+        {
+            if (CurrentToken != null && (CurrentToken.Code == CODE.MULTIPLY || CurrentToken.Code == CODE.DIVIDE))
+            {
+                Match(CurrentToken.Code);
+                OPERAND();
+                B();
+            }
+        }
+
+        private void OPERAND()
+        {
+            if (CurrentToken != null && CurrentToken.Code == CODE.IDENTIFIER)
+            {
+                Match(CODE.IDENTIFIER);
+            }
+            else if (CurrentToken != null && CurrentToken.Code == CODE.UNSIGNED_INT)
+            {
+                Match(CODE.UNSIGNED_INT);
+            }
+            else if (CurrentToken != null && CurrentToken.Code == CODE.LPAREN)
+            {
+                Match(CODE.LPAREN);
+                EXPRESSION();
+                Match(CODE.RPAREN);
+            }
+            else
+            {
+                AddError("Ожидался операнд (идентификатор, число или выражение в скобках)");
+                SkipUntil(new[] { CODE.PLUS, CODE.MINUS, CODE.MULTIPLY, CODE.DIVIDE, CODE.RPAREN, CODE.RBRACE });
+            }
+        }
+
+        private void SkipUntil(CODE[] stopTokens)
+        {
+            while (CurrentToken != null && !Array.Exists(stopTokens, token => token == CurrentToken.Code))
+            {
+                MoveNext();
+            }
+        }
 
     }
 }
