@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,33 +6,7 @@ using System.Threading.Tasks;
 
 namespace Compiler.Analysis
 {
-    public enum CODE
-    {
-        ERROR, // Ошибка
-        INT, // int
-        UINT, // uint
-        FLOAT32, // float32
-        FLOAT64, // float64
-        FUNC, // func
-        RETURN, // return
-        IDENTIFIER, // Идентификатор
-        DELIMITER, // Разделитель (пробел)
-        PLUS, // +
-        MINUS, // -
-        MULTIPLY, // *
-        DIVIDE, // /
-        LBRACE, // {
-        RBRACE, // }
-        LPAREN, // (
-        RPAREN, // )
-        COMMA, // ,
-        UNSIGNED_INT, // Беззнаковое целое число
-        END // ; (конец оператора)
-    }
-
-
-
-    class Scaner
+    public class Scaner
     {
         Dictionary<string, CODE> keyWords = new Dictionary<string, CODE>()
         {
@@ -45,40 +18,30 @@ namespace Compiler.Analysis
             { "return", CODE.RETURN }
         };
 
-        public List<Token> Parse(string text)
+        public List<Token> Scan(string text)
         {
             var tokens = new List<Token>();
             int line = 1, currentColumn = 0; // Текущая позиция в строке
+
+
+            text = text.Replace("\t", " ");
+            text = text.Replace("\r", " ");
 
             for (int i = 0; i < text.Length; i++)
             {
                 var token = "";
                 int startColumn = currentColumn + 1; // Начало токена
 
-                // Пропускаем пробелы
+                // Пропускаем пробелы и новые строки
                 if (text[i] == ' ')
                 {
                     currentColumn++;
                     continue;
                 }
-
-                // Обработка символов перевода строки и табуляции
-                if (text[i] == '\n' || text[i] == '\r' || text[i] == '\t')
+                else if (text[i] == '\n' || text[i] == '\r')
                 {
-                    // Обработка комбинации \r\n (одна строка)
-                    if (text[i] == '\r' && i + 1 < text.Length && text[i + 1] == '\n')
-                    {
-                        i++; // Пропускаем \n
-                    }
-
-                    
-                    // Увеличиваем счетчик строк и сбрасываем текущий столбец
                     line++;
                     currentColumn = 0;
-                    if (text[i] == '\t')
-                    {
-                        currentColumn = 4;
-                    }
                     continue;
                 }
 
@@ -141,6 +104,7 @@ namespace Compiler.Analysis
                     continue;
                 }
 
+
                 // Всё остальное (односимвольные токены)
                 currentColumn++;
                 int singleCharColumn = currentColumn;
@@ -156,15 +120,15 @@ namespace Compiler.Analysis
                     case ')': tokens.Add(new Token(CODE.RPAREN, ")", line, singleCharColumn, singleCharColumn)); break;
                     case ',': tokens.Add(new Token(CODE.COMMA, ",", line, singleCharColumn, singleCharColumn)); break;
                     case ';': tokens.Add(new Token(CODE.END, ";", line, singleCharColumn, singleCharColumn)); break;
-                    default: tokens.Add(new Token(CODE.ERROR, text[i].ToString(), line, singleCharColumn, singleCharColumn)); break;
+                    default:
+                        tokens.Add(new Token(CODE.ERROR, text[i].ToString(), line, singleCharColumn, singleCharColumn));
+                        break;
                 }
             }
-            RemoveLeadingTrailingSpaces(tokens);
+            //RemoveLeadingTrailingSpaces(tokens);
 
             return tokens;
         }
-
-
 
         private bool isLetter(char c)
         {
@@ -179,44 +143,6 @@ namespace Compiler.Analysis
         private bool isDelimiter(char c)
         {
             return c == ' ' || c == '\n' || c == '\t' || c == '\r';
-        }
-
-        private void RemoveLeadingTrailingSpaces(List<Token> tokens)
-        {
-            if (tokens.Count < 2) return;
-
-            HashSet<CODE> notIgnore = new HashSet<CODE>()
-            {
-                CODE.RETURN,
-                CODE.FUNC,
-                CODE.INT,
-                CODE.UINT,
-                CODE.FLOAT32,
-                CODE.FLOAT64,
-                CODE.FUNC,
-                CODE.RETURN,
-                CODE.IDENTIFIER,
-                CODE.UNSIGNED_INT
-            };
-
-            for (int i = 0; i < tokens.Count - 2; i++)
-            {
-                if (!(notIgnore.Contains(tokens[i].Code) && notIgnore.Contains(tokens[i + 2].Code) && tokens[i + 1].Code == CODE.DELIMITER))
-                {
-                    if (tokens[i + 1].Code == CODE.DELIMITER) tokens.RemoveAt(i + 1);
-
-                }
-            }
-
-            if (tokens[tokens.Count - 1].Code == CODE.DELIMITER)
-            {
-                tokens.RemoveAt(tokens.Count - 1);
-            }
-
-            if (tokens[tokens.Count - 2].Code == CODE.DELIMITER)
-            {
-                tokens.RemoveAt(tokens.Count - 2);
-            }
         }
     }
 }

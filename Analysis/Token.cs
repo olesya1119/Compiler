@@ -4,12 +4,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace Compiler.Analysis
 {
+    /// <summary>  Коды токенов </summary>
+    public enum CODE
+    {
+        ERROR, // Ошибка
+        INT, // int
+        UINT, // uint
+        FLOAT32, // float32
+        FLOAT64, // float64
+        FUNC, // func
+        RETURN, // return
+        IDENTIFIER, // Идентификатор
+        DELIMITER, // Разделитель (пробел)
+        PLUS, // +
+        MINUS, // -
+        MULTIPLY, // *
+        DIVIDE, // /
+        LBRACE, // {
+        RBRACE, // }
+        LPAREN, // (
+        RPAREN, // )
+        COMMA, // ,
+        UNSIGNED_INT, // Беззнаковое целое число
+        END // ; (конец оператора)
+    }
+
+    /// <summary> Класс токена </summary>
     public class Token
     {
-        private CODE _code;
+        public CODE Code { get; set; }
         private string _token;
         private int _line;
         private int _startColumn;
@@ -17,22 +42,21 @@ namespace Compiler.Analysis
 
         public Token(CODE code, string token, int line, int startColumn, int endColumn)
         {
-            _code = code;
+            Code = code;
             _token = token;
             _line = line;
             _startColumn = startColumn;
             _endColumn = endColumn;
         }
 
-        public CODE Code => _code;
         public string TokenValue => _token;
         public int Line => _line;
         public int StartColumn => _startColumn;
         public int EndColumn => _endColumn;
 
-        public override string ToString() {
-            return $"{(int)_code} - {_code} - {_token} - с {_startColumn} по {_endColumn} символ";
+        public override string ToString()
+        {
+            return $"Code: {Enum.GetName(typeof(CODE), Code),-12} | Token: {_token,-15} | Line: {_line,3} | Start: {_startColumn,3} | End: {_endColumn,3}";
         }
-
     }
 }

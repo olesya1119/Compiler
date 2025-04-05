@@ -91,16 +91,13 @@ namespace Compiler.ViewModel
         {
             if (DocumentsVM.SelectedDocument != null)
             {
-                Scaner scaner = new Scaner();
+                Parser parser = new Parser(DocumentsVM.SelectedDocument.TextContent);
                 DocumentsVM.SelectedErrors.Clear();
-                var result = scaner.Parse(DocumentsVM.SelectedDocument.TextContent);
 
-                Parser parser = new Parser(result);
-                parser.Parse();
-
-                foreach (var e in parser.Errors)
+                foreach (var e in parser.Parse())
                 {
-                    DocumentsVM.AddError(e.Token.Line, e.Token.StartColumn, e.Message);
+                    DocumentsVM.AddError(e.Line, e.Column, e.Message);
+
                 }
                 OnPropertyChanged(nameof(Errors));
             }

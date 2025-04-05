@@ -75,7 +75,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Analysis\ErrorsGenerator.cs" />
+    <Compile Include="Analysis\ArgumentsParser.cs" />
+    <Compile Include="Analysis\BaseParser.cs" />
+    <Compile Include="Analysis\ExpressionParser.cs" />
+    <Compile Include="Analysis\FuncHeadParser.cs" />
     <Compile Include="Analysis\Parser.cs" />
     <Compile Include="Analysis\Scaner.cs" />
     <Compile Include="Analysis\Token.cs" />

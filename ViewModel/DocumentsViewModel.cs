@@ -46,7 +46,8 @@ namespace Compiler.ViewModel
         public TextEditor Editor
         {
             get => _editor;
-            set { _editor = value; OnPropertyChanged(); }
+            set { _editor = value; 
+                OnPropertyChanged(); }
         }
 
         private void NewDocument(object parameter)
