@@ -109,7 +109,7 @@ namespace Compiler.Analysis
             Index = 0;
             Token startErrorToken;
 
-            while (Index < EndPos && !Type())
+            while (Index < EndPos - 1 && !Type())
             {
                 errorValue = "";
                 SkipSpace();
@@ -219,6 +219,7 @@ namespace Compiler.Analysis
 
             else if (!FindAgrsType)
             {
+                Index--;
                 AddError($"Ожидался тип аргументов, а нашлось {Token.TokenValue}.");
             }
 
