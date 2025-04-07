@@ -62,13 +62,12 @@ namespace Compiler.Analysis
                 findEND = true;
                 ENDPos = Index;
 
-
             }
             Index = 0;
 
-            if (findRBRACE) endPos = RBRACEPos - 1;
-            else if (findEND) endPos = ENDPos - 1;
-            else endPos = _tokens.Count - 1;
+            if (findRBRACE) endPos = RBRACEPos;
+            else if (findEND) endPos = ENDPos;
+            else endPos = _tokens.Count;
 
 
             StatuExp status = StatuExp.OPERTION;
@@ -195,7 +194,7 @@ namespace Compiler.Analysis
                 }
             }
 
-            if (status != StatuExp.OPERAND || status != StatuExp.RPAREN)
+            if (status != StatuExp.OPERAND && status != StatuExp.RPAREN)
             {
                 AddError($"Ожидался операнд или )", _tokens[Index]);
             }
@@ -213,8 +212,21 @@ namespace Compiler.Analysis
                 Index = _;
             }
 
-            if (!findRBRACE) AddError("Ожидалось }");
-            if (!findEND) AddError("Ожидалось ;");
+            if (!findRBRACE)
+            {
+                AddError("Ожидалось }");
+                return;
+            }
+            if (!findEND) 
+            {
+                AddError("Ожидалось ;");
+                return;
+            }
+
+            if (endPos - RBRACEPos != 1)
+            {
+                AddError($"Неожиданная последовательность" , _tokens[RBRACEPos  + 1]);
+            } 
 
         }
     }

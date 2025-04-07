@@ -24,8 +24,8 @@ namespace Compiler.Analysis
             int line = 1, currentColumn = 0; // Текущая позиция в строке
             int absoluteIndex = 0; // Абсолютный индекс в исходном тексте
 
-            text = text.Replace("\t", "    ");
-            text = text.Replace("\r", "");
+            text = text.Replace("\t", " ");
+            text = text.Replace("\r", " ");
 
             for (int i = 0; i < text.Length; i++, absoluteIndex++)
             {
