@@ -37,7 +37,7 @@ namespace Compiler.Analysis
             {
                 funcHeadParser.Parse();
             }
-            //catch { }
+            catch { }
             finally
             {
                 AddErrorsList(funcHeadParser.Errors);
@@ -49,7 +49,7 @@ namespace Compiler.Analysis
             {
                 argumentsParser.Parse();
             }
-            //catch { }
+            catch { }
             finally
             {
                 AddErrorsList(argumentsParser.Errors);
@@ -60,13 +60,14 @@ namespace Compiler.Analysis
             {
                 expressionParser.Parse();
             }
-            //catch { }
+            catch { }
             finally
             {
                 AddErrorsList(expressionParser.Errors);
             }
 
             SortErrors();
+            ClearRepearError();
             foreach (var er in _errors)
             {
                 Console.WriteLine(er);
@@ -86,6 +87,20 @@ namespace Compiler.Analysis
         private void SortErrors()
         {
             _errors = _errors.OrderBy(e => e.Line).ThenBy(e => e.Column).ToList();
+        }
+
+        private void ClearRepearError()
+        {
+            int i = 0;
+            while (i < _errors.Count - 1)
+            {
+                if (_errors[i].Token == _errors[i + 1].Token)
+                {
+                    _errors.RemoveAt(i);
+                    continue;
+                }
+                i++;
+            }
         }
 
 
@@ -125,7 +140,7 @@ namespace Compiler.Analysis
                     _tokens[i].Code == CODE.IDENTIFIER && _tokens[i + 1].Code == CODE.UNSIGNED_INT)
                 {
                     var token = new Token(CODE.IDENTIFIER, _tokens[i].TokenValue + _tokens[i + 1].TokenValue,
-                        _tokens[i].Line, _tokens[i].StartColumn, _tokens[i + 1].EndColumn);
+                        _tokens[i].Line, _tokens[i].StartColumn, _tokens[i + 1].EndColumn, _tokens[i].StartIndex, _tokens[i + 1].EndIndex);
 
                     _tokens.RemoveAt(i);
                     _tokens.RemoveAt(i);
@@ -137,7 +152,7 @@ namespace Compiler.Analysis
                 if (_tokens[i].Code == CODE.UNSIGNED_INT && _tokens[i + 1].Code == CODE.UNSIGNED_INT)
                 {
                     var token = new Token(CODE.UNSIGNED_INT, _tokens[i].TokenValue + _tokens[i + 1].TokenValue,
-                        _tokens[i].Line, _tokens[i].StartColumn, _tokens[i + 1].EndColumn);
+                        _tokens[i].Line, _tokens[i].StartColumn, _tokens[i + 1].EndColumn, _tokens[i].StartIndex, _tokens[i + 1].EndIndex);
 
                     _tokens.RemoveAt(i);
                     _tokens.RemoveAt(i);

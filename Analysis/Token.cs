@@ -40,19 +40,24 @@ namespace Compiler.Analysis
         private int _startColumn;
         private int _endColumn;
 
-        public Token(CODE code, string token, int line, int startColumn, int endColumn)
+        public Token(CODE code, string token, int line, int startColumn, int endColumn, int startIndex, int endIndex)
         {
             Code = code;
             _token = token;
             _line = line;
             _startColumn = startColumn;
             _endColumn = endColumn;
+            StartIndex = startIndex;
+            EndIndex = endIndex;
         }
 
         public string TokenValue => _token;
         public int Line => _line;
         public int StartColumn => _startColumn;
         public int EndColumn => _endColumn;
+
+        public int StartIndex { get; set; }
+        public int EndIndex { get; set; }
 
         public override string ToString()
         {

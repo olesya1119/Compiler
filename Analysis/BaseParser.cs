@@ -12,12 +12,14 @@ namespace Compiler.Analysis
         public string Message { get; set; }
         public int Line { get; set; }
         public int Column { get; set; }
+        public Token Token { get; set; }
 
         public ErrorEntry(string message, Token token)
         {
             Message = message;
             Line = token.Line;
             Column = token.StartColumn;
+            Token = token;
         }
 
         public override string ToString()
@@ -86,7 +88,7 @@ namespace Compiler.Analysis
 
             SkipSpace();
             string errorValue = "";
-            Token startToken = _tokens[startPos], endToken;
+            Token startToken = _tokens[startPos], endToken = _tokens[startPos];
             bool flag = false;
 
             for (int i = startPos; i < endPos && condition(); i++)
@@ -96,14 +98,6 @@ namespace Compiler.Analysis
                 endToken = _tokens[i];
                 errorValue += _tokens[i].TokenValue;
             }
-
-            // TODO: Тут нужно явно доработать. Пока что не трогаю то нужно делать срез со строки.
-            // А еще аналогично организовать лексические ошибки
-            if (flag)
-            {
-
-            }
-
 
             return errorValue;
         }

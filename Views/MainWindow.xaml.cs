@@ -1,8 +1,10 @@
 ﻿using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
+using Compiler.Model;
 using Compiler.Views;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -95,7 +97,22 @@ namespace Compiler
             }
 
         }
-    }
 
-    
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is DataGrid dataGrid && dataGrid.SelectedItem is ErrorModel selectedError)
+            {
+                if (DataContext is ViewModel.MainViewModel vm && vm.DocumentsVM.Editor != null)
+                {
+                    var textEditor = vm.DocumentsVM.Editor;
+                    int line = selectedError.Line;
+                    int column = selectedError.Column;
+                    int offset = textEditor.Document.GetOffset(line, column);
+                    textEditor.CaretOffset = offset;
+                    textEditor.ScrollTo(line, column);
+                    textEditor.Focus();
+                }
+            }
+        }
+    }
 }
