@@ -16,7 +16,7 @@ namespace Compiler.Analysis
         public List<ErrorEntry> Parse()
         {
             SkipSpace();
-            //Console.WriteLine(Token);
+            Console.WriteLine(Token);
             EXPRESSION();
 
             return _errors;
@@ -41,11 +41,11 @@ namespace Compiler.Analysis
 
             bool findEND = false;
             bool findRBRACE = false;
-            while (Token.Code != CODE.RBRACE && Token.Code != CODE.END)
+            while (IsNotEndList && Token.Code != CODE.RBRACE && Token.Code != CODE.END)
             {
                 Index++;
             }
-            if (Token.Code == CODE.RBRACE)
+            if (IsNotEndList && Token.Code == CODE.RBRACE)
             {
                 findRBRACE = true;
                 RBRACEPos = Index;
@@ -53,7 +53,7 @@ namespace Compiler.Analysis
             }
             Index = 0;
 
-            while (Token.Code != CODE.END)
+            while (IsNotEndList && Token.Code != CODE.END)
             {
                 Index++;
             }
@@ -193,6 +193,11 @@ namespace Compiler.Analysis
                     }
 
                 }
+            }
+
+            if (status != StatuExp.OPERAND || status != StatuExp.RPAREN)
+            {
+                AddError($"Ожидался операнд или )", _tokens[Index]);
             }
 
             if (countLPAREN > countRPAREN)

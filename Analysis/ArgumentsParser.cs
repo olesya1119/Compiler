@@ -123,6 +123,7 @@ namespace Compiler.Analysis
                         continue;
                     }
 
+
                     else
                     {
                         startErrorToken = Token;
@@ -203,6 +204,14 @@ namespace Compiler.Analysis
                 }
             }
 
+            if (lastCode != CODE.IDENTIFIER) AddError($"Ожидалася индификатор.", _tokens[Index]);
+
+            if (Type())
+            {
+                FindAgrsType = true;
+                Index++;
+            }
+
             if (FindAgrsType && Index < EndPos - 1)
             {
                 startErrorToken = Token;
@@ -222,10 +231,9 @@ namespace Compiler.Analysis
                 Index=EndPos;
                 errorValue = CollectError(Index, EndPos);
                 startErrorToken = Token;
-                AddError($"Ожидался тип аргументов, а нашлось '{Token.TokenValue}'." , startErrorToken);
                 if (errorValue != "")
                 {
-                    AddError($"Ожидался тип аргументов, а нашлось '{errorValue}'.");
+                    AddError($"Ожидался тип аргументов, а нашлось '{errorValue}'.", startErrorToken);
                 }
                 else
                 {
@@ -261,10 +269,11 @@ namespace Compiler.Analysis
                 {
                     if (Index != EndPos + 1)
                     {
+                        startErrorToken = Token;
                         errorValue = CollectError(Index, EndPos + 1);
                         if (errorValue != "")
                         {
-                            AddError($"Неожиданное значение после ) '{errorValue}'.");
+                            AddError($"Неожиданное значение после ) '{errorValue}'.", startErrorToken);
                         }
                         else
                         {
@@ -288,27 +297,29 @@ namespace Compiler.Analysis
                 {
                     Index = EndPos + 2;
                     AddError("Ожидалось return");
+                    startErrorToken = Token;
                     errorValue = CollectError(Index, _tokens.Count, true, () => Token.Code != CODE.IDENTIFIER);
                     if (errorValue != "")
                     {
-                        AddError($"Ожидалось return, а нашлось '{errorValue}'.");
+                        AddError($"Ожидалось return, а нашлось '{errorValue}'.", startErrorToken);
                     }
                     else
                     {
                         AddError($"Ожидалось return, а нашлось '{Token.TokenValue}'.");
                     }
 
-                    NextPosition = Index;
+                    NextPosition = Index + 1;
                     return;
                 }
                 else
                 {
                     if (Index != startPos)
                     {
+                        startErrorToken = Token;
                         errorValue = CollectError(startPos, Index, false);
                         if (errorValue != "")
                         {
-                            AddError($"Неожиданное значение перед return '{errorValue}'.");
+                            AddError($"Неожиданное значение перед return '{errorValue}'.", startErrorToken);
                         }
                         else
                         {

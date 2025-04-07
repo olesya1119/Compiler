@@ -37,7 +37,7 @@ namespace Compiler.Analysis
             {
                 funcHeadParser.Parse();
             }
-            catch { }
+            //catch { }
             finally
             {
                 AddErrorsList(funcHeadParser.Errors);
@@ -49,7 +49,7 @@ namespace Compiler.Analysis
             {
                 argumentsParser.Parse();
             }
-            catch { }
+            //catch { }
             finally
             {
                 AddErrorsList(argumentsParser.Errors);
@@ -60,7 +60,7 @@ namespace Compiler.Analysis
             {
                 expressionParser.Parse();
             }
-            catch { }
+            //catch { }
             finally
             {
                 AddErrorsList(expressionParser.Errors);
