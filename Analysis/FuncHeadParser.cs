@@ -12,13 +12,24 @@ namespace Compiler.Analysis
         {
         }
 
-        public bool FindLPAREN { get; set; } = false;
+        public bool FindLparen { get; set; } = false;
         public bool FindFunc { get; set; } = false;
 
-        public int LPARENPos { get; set; }
+        public int LparenPos { get; set; }
         public int FuncPos { get; set; }
 
+        private int endPos = 0;
+
+
         public List<ErrorEntry> Parse()
+        {
+            BeforeParse();
+            Func();
+            return _errors;
+        }
+
+
+        private void BeforeParse()
         {
             while (Index < _tokens.Count - 1 && Token.Code != CODE.LPAREN)
             {
@@ -26,8 +37,8 @@ namespace Compiler.Analysis
             }
             if (Token.Code == CODE.LPAREN)
             {
-                FindLPAREN = true;
-                LPARENPos = Index;
+                FindLparen = true;
+                LparenPos = Index;
             }
             Index = 0;
 
@@ -41,21 +52,24 @@ namespace Compiler.Analysis
                 FuncPos = Index;
 
             }
+
+            if (LparenPos > 10 || LparenPos < FuncPos)
+            {
+                FindLparen = false;
+            }
+
+            if (FindLparen) endPos = LparenPos;
+            else endPos = _tokens.Count;
             Index = 0;
 
-            Func();
-            return _errors;
+            NextPosition = endPos + 1;
         }
-
 
         private void Func()
         {
-            Condition condition = () => Token.Code != CODE.IDENTIFIER;
-            string errorValue;
-
             if (!FindFunc)
             {
-                AddError($"Ожидалось ключевое слово func");
+                AddError($"Ожидалось: ключевое слово func.");
                 Index = 1;
 
             }
@@ -63,57 +77,60 @@ namespace Compiler.Analysis
             {
                 if (FuncPos != 0)
                 {
-                    AddError($"Ожидалось ключевое слово func");
+                    AddError($"Ожидалось: ключевое слово func.");
                 }
 
                 Index = FuncPos + 1;
                 if (Token.Code != CODE.DELIMITER)
                 {
-                    AddError($"Ожидался пробел после func");
+                    AddError($"Ожидалось: пробел после func.");
                 }
                 Index++;
             }
 
+            FuncName();
+        }
 
-            if (FindLPAREN)
+        private void FuncName()
+        {
+            SkipSpace();
+            string errorValue;
+            Condition condition = () => Token.Code != CODE.IDENTIFIER;
+            Token startToken = Token;
+
+            // Проверяем имя функции
+            errorValue = CollectError(Index, endPos, true, condition);
+            if (Token.Code != CODE.IDENTIFIER)
             {
-                errorValue = CollectError(Index, LPARENPos, true, condition);
-
-                if (Token.Code != CODE.IDENTIFIER)
-                {
-                    if (errorValue != "") AddError($"Ожидалось имя функции, а нашлось {errorValue}");
-                }
-                else
-                {
-                    if (errorValue != "") AddError($"Неожиданная последовательность символов {errorValue}");
-                    Index++;
-
-                    errorValue = CollectError(Index, LPARENPos - 1, true, condition);
-
-                    if (errorValue != "")
-                    {
-                        if (Token.Code == CODE.IDENTIFIER)
-                        {
-                            Index--;
-                            AddError($"Ожидалось (");
-                        }
-                        else AddError($"Неожиданные символы после имени функции {errorValue}");
-                    }
-                }
+                AddError($"Ожидалось: идентификатор (имя функции).", 0,startToken);
             }
-
             else
             {
-                errorValue = CollectError(Index, _tokens.Count, true, condition);
-
-                if (Token.Code != CODE.IDENTIFIER)
-                {
-                    if (errorValue != "") AddError($"Ожидалось имя функции, а нашлось {errorValue}");
-                }
-                AddError($"Ожидалось (");
+                if (errorValue != "") AddError($"Лишняя последовательность символов.", 0, startToken);
             }
-            NextPosition = Index + 1;
-            Console.WriteLine("Голова: " + Tokens[NextPosition].ToString());
+
+            AfterFuncName();
+        }
+
+        private void AfterFuncName()
+        {
+            Index++;
+            SkipSpace();
+            string errorValue;
+            Token startToken = Token;
+            if (FindLparen)
+            {
+                errorValue = CollectError(Index, endPos);
+                if (errorValue != "") AddError($"Лишняя последовательность символов.", 0, startToken);
+            }
+            else
+            {
+                AddError($"Ожидалось: ( после имени функции.", 1);
+                NextPosition = Index;
+            }
+
+            AddError($"ГОЛОВА: {_tokens[NextPosition]}");
+
         }
     }
 }

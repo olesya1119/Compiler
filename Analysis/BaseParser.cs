@@ -13,13 +13,15 @@ namespace Compiler.Analysis
         public int Line { get; set; }
         public int Column { get; set; }
         public Token Token { get; set; }
+        public int Priority { get; set; }
 
-        public ErrorEntry(string message, Token token)
+        public ErrorEntry(string message, Token token, int priority)
         {
             Message = message;
             Line = token.Line;
             Column = token.StartColumn;
             Token = token;
+            Priority = priority;
         }
 
         public override string ToString()
@@ -75,9 +77,9 @@ namespace Compiler.Analysis
 
 
         ///<summary> Добавление ошибок в список ошибок </summary>
-        protected void AddError(string message, Token token = null)
+        protected void AddError(string message, int priority = 0, Token token = null)
         {
-            _errors.Add(new ErrorEntry(message, token ?? Token));
+            _errors.Add(new ErrorEntry(message, token ?? Token, priority));
         }
 
         ///<summary> Сбор ошибок </summary>
@@ -89,11 +91,9 @@ namespace Compiler.Analysis
             SkipSpace();
             string errorValue = "";
             Token startToken = _tokens[startPos], endToken = _tokens[startPos];
-            bool flag = false;
 
             for (int i = startPos; i < endPos && condition(); i++)
             {
-                flag = true;
                 if (moveIndex) Index++;
                 endToken = _tokens[i];
                 errorValue += _tokens[i].TokenValue;

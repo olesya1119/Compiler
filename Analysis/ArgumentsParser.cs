@@ -130,7 +130,7 @@ namespace Compiler.Analysis
                         errorValue = CollectError(Index, EndPos, true, () => !Type() && Token.Code != CODE.IDENTIFIER && Token.Code != CODE.COMMA);
                         if (errorValue != "")
                         {
-                            AddError($"Ожидался индификатор, а нашлось '{errorValue}'.", startErrorToken);
+                            AddError($"Ожидался индификатор, а нашлось '{errorValue}'.", 0, startErrorToken);
                         }
                         else
                         {
@@ -177,7 +177,7 @@ namespace Compiler.Analysis
                         errorValue = CollectError(Index, EndPos, true, () => !Type() && Token.Code != CODE.IDENTIFIER && Token.Code != CODE.COMMA);
                         if (errorValue != "")
                         {
-                            AddError($"Ожидалась запятая или тип, а нашлось '{errorValue}'.", startErrorToken);
+                            AddError($"Ожидалась запятая или тип, а нашлось '{errorValue}'.", 0, startErrorToken);
                         }
                         else
                         {
@@ -204,7 +204,7 @@ namespace Compiler.Analysis
                 }
             }
 
-            if (lastCode != CODE.IDENTIFIER) AddError($"Ожидалася индификатор.", _tokens[Index]);
+            if (lastCode != CODE.IDENTIFIER) AddError($"Ожидалася индификатор.", 0, _tokens[Index]);
 
             if (Type())
             {
@@ -218,7 +218,7 @@ namespace Compiler.Analysis
                 errorValue = CollectError(Index, EndPos);
                 if (errorValue != "")
                 {
-                    AddError($"Неожиданное значение после типа аргументов '{errorValue}'.", startErrorToken);
+                    AddError($"Неожиданное значение после типа аргументов '{errorValue}'.", 0, startErrorToken);
                 }
                 else
                 {
@@ -233,7 +233,7 @@ namespace Compiler.Analysis
                 startErrorToken = Token;
                 if (errorValue != "")
                 {
-                    AddError($"Ожидался тип аргументов, а нашлось '{errorValue}'.", startErrorToken);
+                    AddError($"Ожидался тип аргументов, а нашлось '{errorValue}'.", 0, startErrorToken);
                 }
                 else
                 {
@@ -255,7 +255,7 @@ namespace Compiler.Analysis
 
             if (Status == ArgumentsStatus.FIND_RPAREN)
             {
-                while (Token.Code != CODE.LBRACE && IsNotEndList)
+                while (IsNotEndList && Token.Code != CODE.LBRACE)
                 {
                     Index++;
                 }
@@ -273,7 +273,7 @@ namespace Compiler.Analysis
                         errorValue = CollectError(Index, EndPos + 1);
                         if (errorValue != "")
                         {
-                            AddError($"Неожиданное значение после ) '{errorValue}'.", startErrorToken);
+                            AddError($"Неожиданное значение после ) '{errorValue}'.", 0, startErrorToken);
                         }
                         else
                         {
@@ -301,7 +301,7 @@ namespace Compiler.Analysis
                     errorValue = CollectError(Index, _tokens.Count, true, () => Token.Code != CODE.IDENTIFIER);
                     if (errorValue != "")
                     {
-                        AddError($"Ожидалось return, а нашлось '{errorValue}'.", startErrorToken);
+                        AddError($"Ожидалось return, а нашлось '{errorValue}'.", 0, startErrorToken);
                     }
                     else
                     {
@@ -319,7 +319,7 @@ namespace Compiler.Analysis
                         errorValue = CollectError(startPos, Index, false);
                         if (errorValue != "")
                         {
-                            AddError($"Неожиданное значение перед return '{errorValue}'.", startErrorToken);
+                            AddError($"Неожиданное значение перед return '{errorValue}'.", 0, startErrorToken);
                         }
                         else
                         {

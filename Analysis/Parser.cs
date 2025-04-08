@@ -37,7 +37,7 @@ namespace Compiler.Analysis
             {
                 funcHeadParser.Parse();
             }
-            //catch { }
+            catch { }
             finally
             {
                 AddErrorsList(funcHeadParser.Errors);
@@ -49,10 +49,10 @@ namespace Compiler.Analysis
             {
                 argumentsParser.Parse();
             }
-            //catch { }
+            catch { }
             finally
             {
-                AddErrorsList(argumentsParser.Errors);
+                //AddErrorsList(argumentsParser.Errors);
             }
 
             var expressionParser = new ExpressionParser(argumentsParser.Tokens, argumentsParser.NextPosition, _text);
@@ -60,14 +60,14 @@ namespace Compiler.Analysis
             {
                 expressionParser.Parse();
             }
-            //catch { }
+            catch { }
             finally
             {
-                AddErrorsList(expressionParser.Errors);
+                //AddErrorsList(expressionParser.Errors);
             }
 
             SortErrors();
-            ClearRepearError();
+            //ClearRepearError();
             foreach (var er in _errors)
             {
                 Console.WriteLine(er);
@@ -122,7 +122,7 @@ namespace Compiler.Analysis
                         i++;
                     }
 
-                    AddError($"Неожиданная последовательность символов: '{unknownSequence}'", _tokens[startIndex]);
+                    AddError($"Неожиданная последовательность символов: '{unknownSequence}'", 0, _tokens[startIndex]);
                     _tokens.RemoveRange(startIndex, i - startIndex);
                     i = startIndex;
                 }
@@ -185,9 +185,9 @@ namespace Compiler.Analysis
 
 
         ///<summary> Добавление ошибок в список ошибок </summary>
-        protected void AddError(string message, Token token = null)
+        protected void AddError(string message, int priority = 0, Token token = null)
         {
-            _errors.Add(new ErrorEntry(message, token ?? Token));
+            _errors.Add(new ErrorEntry(message, token ?? Token, priority));
         }
 
         private void AddErrorsList(List<ErrorEntry> ers)
