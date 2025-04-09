@@ -154,7 +154,7 @@ namespace Compiler.Analysis
                             errorValue += Token.TokenValue;
                             Index++;
                         }
-                        AddError($"Ожидалось: операнд или ).");
+                        AddError($"Ожидалось: арифметическая операция или ).");
 
                         if (Operation()) { status = StatuExp.OPERTION; Index++; continue; }
                         if (Token.Code == CODE.LPAREN) { status = StatuExp.LPAREN; Index++; countLPAREN++; continue; }

@@ -263,7 +263,7 @@ namespace Compiler.Analysis
             if (!FindRparen) AddError("Ожидалось: ).", 3, _tokens[FindAgrsType ? TypePos + 1 : Index]);
         
             if (!FindLbrace && !FindRparen) AddError("Ожидалось: {.", 2, _tokens[FindAgrsType ? TypePos + 2 : Index]);
-            else if (EndPos + 1 < _tokens.Count && !FindLbrace) AddError("Ожидалось: {.", 2, _tokens[FindAgrsType ? EndPos + 1 : Index]);
+            else if (EndPos + 1 < _tokens.Count && !FindLbrace) AddError("Ожидалось: {.", 2, _tokens[FindAgrsType ? EndPos + 1 : Index + 1]);
 
             if (!FindReturn)
             {
