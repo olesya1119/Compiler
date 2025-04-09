@@ -27,6 +27,18 @@ namespace Compiler.Analysis
         public ArgumentsStatus Status { get; set; }
         public int EndPos { get; set; }
         public bool FindAgrsType { get; set; } = false;
+        int TypePos { get; set; }
+
+        // Местоположение различных важных токенов
+        bool FindRparen{ get; set; } = false;
+        bool FindLbrace { get; set; } = false;
+        bool FindReturn { get; set; } = false;
+        bool FindEnd { get; set; }=false;
+
+        int RparenPos { get; set; }
+        int LbracePos { get; set; }
+        int ReturnPos { get; set; }
+        int ENDPos { get; set; }
 
 
         public List<ErrorEntry> Parse()
@@ -46,7 +58,7 @@ namespace Compiler.Analysis
             EndPos = Index;
 
             // Постараемся найти конец наших аргументов. Сначала без ошибок - )
-            while (Token.Code != CODE.RPAREN && IsNotEndList && Token.Code != CODE.LBRACE && Token.Code != CODE.RETURN && Token.Code != CODE.END)
+            while (IsNotEndList && Token.Code != CODE.RPAREN && Token.Code != CODE.LBRACE && Token.Code != CODE.RETURN && Token.Code != CODE.END)
             {
                 Index++;
             }
@@ -54,7 +66,9 @@ namespace Compiler.Analysis
             {
                 EndPos = Index;
                 Status = ArgumentsStatus.FIND_RPAREN;
-                return;
+                FindRparen = true;
+                RparenPos = Index;
+
             }
             Index = 0;
 
@@ -67,7 +81,8 @@ namespace Compiler.Analysis
             {
                 EndPos = Index;
                 Status = ArgumentsStatus.FIND_LBRACE;
-                return;
+                FindLbrace = true;
+                LbracePos = Index;
             }
             Index = 0;
 
@@ -82,7 +97,8 @@ namespace Compiler.Analysis
             {
                 EndPos = Index;
                 Status = ArgumentsStatus.FIND_RETURN;
-                return;
+                FindReturn = true;
+                ReturnPos = Index;
             }
             Index = 0;
 
@@ -94,16 +110,21 @@ namespace Compiler.Analysis
             {
                 EndPos = Index;
                 Status = ArgumentsStatus.FIND_END;
-                return;
+                FindEnd = true;
+                ENDPos = Index;
             }
-            Index = 0;
-            EndPos = _tokens.Count - 1;
+            
+            if(FindRparen) EndPos = RparenPos;
+            else if (FindLbrace) EndPos = LbracePos;
+            else if (FindReturn) EndPos = ReturnPos;
+            else if (FindEnd) EndPos = EndPos;
+            else EndPos = _tokens.Count - 1;
         }
 
-
-
+        // Проверка аргументов
         private void ParseArguments()
         {
+            // Начитаем перебирать аргументы
             CODE lastCode = CODE.COMMA;
             string errorValue;
             Index = 0;
@@ -123,23 +144,16 @@ namespace Compiler.Analysis
                         continue;
                     }
 
-
                     else
                     {
                         startErrorToken = Token;
                         errorValue = CollectError(Index, EndPos, true, () => !Type() && Token.Code != CODE.IDENTIFIER && Token.Code != CODE.COMMA);
-                        if (errorValue != "")
-                        {
-                            AddError($"Ожидался индификатор, а нашлось '{errorValue}'.", 0, startErrorToken);
-                        }
-                        else
-                        {
-                            AddError($"Ожидался индификатор, а нашлось '{Token.TokenValue}'.");
-                        }
+                        AddError($"Ожидалось: индификатор.", 0, startErrorToken);
 
                         if (Type())
                         {
                             FindAgrsType = true;
+                            TypePos = Index;
                             break;
                         }
                         else if (Token.Code == CODE.IDENTIFIER)
@@ -167,6 +181,7 @@ namespace Compiler.Analysis
                     if (Type())
                     {
                         FindAgrsType = true;
+                        TypePos = Index;
                         Index++;
                         break;
                     }
@@ -175,18 +190,12 @@ namespace Compiler.Analysis
                     {
                         startErrorToken = Token;
                         errorValue = CollectError(Index, EndPos, true, () => !Type() && Token.Code != CODE.IDENTIFIER && Token.Code != CODE.COMMA);
-                        if (errorValue != "")
-                        {
-                            AddError($"Ожидалась запятая или тип, а нашлось '{errorValue}'.", 0, startErrorToken);
-                        }
-                        else
-                        {
-                            AddError($"Ожидалась запятая или тип, а нашлось '{Token.TokenValue}'.");
-                        }
+                        AddError($"Ожидалось: запятая или тип.", 0, startErrorToken);
 
                         if (Type())
                         {
                             FindAgrsType = true;
+                            TypePos = Index;
                             Index++;
                             break;
                         }
@@ -204,47 +213,86 @@ namespace Compiler.Analysis
                 }
             }
 
-            if (lastCode != CODE.IDENTIFIER) AddError($"Ожидалася индификатор.", 0, _tokens[Index]);
+            if (lastCode != CODE.IDENTIFIER) AddError($"Ожидалось: индификатор.", 0, _tokens[Index]);
+            NextPosition = Index + 1;
 
-            if (Type())
+            if (IsNotEndList && Type())
             {
                 FindAgrsType = true;
+                TypePos = Index;
                 Index++;
             }
 
             if (FindAgrsType && Index < EndPos - 1)
             {
+                SkipSpace();
                 startErrorToken = Token;
                 errorValue = CollectError(Index, EndPos);
-                if (errorValue != "")
-                {
-                    AddError($"Неожиданное значение после типа аргументов '{errorValue}'.", 0, startErrorToken);
-                }
-                else
-                {
-                    AddError($"Неожиданное значение после типа аргументов '{Token.TokenValue}'.");
-                }
+                AddError($"Лишняя последовательность символов.", 0, startErrorToken);
             }
 
             else if (!FindAgrsType)
             {
-                Index=EndPos;
+                Index = EndPos;
+                SkipSpace();
                 errorValue = CollectError(Index, EndPos);
                 startErrorToken = Token;
-                if (errorValue != "")
-                {
-                    AddError($"Ожидался тип аргументов, а нашлось '{errorValue}'.", 0, startErrorToken);
-                }
-                else
-                {
-                    AddError($"Ожидался тип аргументов, а нашлось '{Token.TokenValue}.");
-                }
+                AddError($"Ожидалось: тип аргументов.", 1, startErrorToken);
             }
 
+            EndArguments(); 
+        }
 
+        // Проверка конца агрументов
+        private void EndArguments()
+        {
+            Token startErrorToken;
+            string errorValue;
             // Проверяем конец и пытаемся найти переход на выражение
+            
+            NextPosition = Index + 1;
 
-            Index = EndPos;
+            if (FindReturn) NextPosition = ReturnPos + 1;
+            else if (FindLbrace) NextPosition = LbracePos + 1;
+            else if (FindRparen) NextPosition = RparenPos + 1;
+            else NextPosition = Index + 1;
+
+            
+
+
+            if (!FindRparen) AddError("Ожидалось: ).", 3, _tokens[FindAgrsType ? TypePos + 1 : Index]);
+        
+            if (!FindLbrace && !FindRparen) AddError("Ожидалось: {.", 2, _tokens[FindAgrsType ? TypePos + 2 : Index]);
+            else if (EndPos + 1 < _tokens.Count && !FindLbrace) AddError("Ожидалось: {.", 2, _tokens[FindAgrsType ? EndPos + 1 : Index]);
+
+            if (!FindReturn)
+            {
+                int buf = NextPosition;
+                if (!FindLbrace && !FindRparen && FindAgrsType) buf = TypePos + 1;
+
+                Index = buf;
+
+                while (IsNotEndList && Token.Code != CODE.IDENTIFIER) Index++;
+                if (IsNotEndList) AddError("Ожидалось: ключевое слово return.", 3, _tokens[Index]);
+                Index++;
+                NextPosition = Index;
+            }
+
+            if (!FindEnd)
+            {
+                _tokens.Add(new Token(CODE.DELIMITER, " ", _tokens[_tokens.Count - 1].Line, _tokens[_tokens.Count - 1].EndColumn + 1, _tokens[_tokens.Count - 1].EndColumn + 1, _tokens[_tokens.Count - 1].EndIndex + 1, _tokens[_tokens.Count - 1].EndIndex + 1));
+                AddError("Ожидалось: ;", 0, _tokens[_tokens.Count - 1]);
+            }
+
+            if (FindRparen && FindLbrace && LbracePos - RparenPos != 1) AddError("Лишняя последовательность символов.", 0, _tokens[LbracePos + 1]);
+
+            if (FindLbrace && FindReturn && ReturnPos - LbracePos != 1) AddError("Лишняя последовательность символов.", 0, _tokens[RparenPos + 1]);
+
+            if (NextPosition >= _tokens.Count) NextPosition = _tokens.Count - 1;
+            //AddError("Аргументы: " + Tokens[NextPosition].ToString(), 0, Tokens[NextPosition]);
+
+
+            /*Index = EndPos;
             if (Status != ArgumentsStatus.FIND_RPAREN)
             {
                 AddError("Ожидалось )");
@@ -346,8 +394,10 @@ namespace Compiler.Analysis
                 AddError("Ожидалось ;");
             }
 
-            Console.WriteLine("Аргументы: " + Tokens[NextPosition].ToString());
+            AddError("Аргументы: " + Tokens[NextPosition].ToString(), 0, Tokens[NextPosition]);*/
 
         }
+
+            
     }
 }

@@ -99,8 +99,7 @@ namespace Compiler.Analysis
                             errorValue += Token.TokenValue;
                             Index++;
                         }
-                        if (errorValue != "") AddError($"Ожидался операнд или ( а нашлось {errorValue}");
-                        else AddError($"Ожидался операнд или ( а нашлось {Token.TokenValue}");
+                        AddError($"Ожидалось: операнд");
                         if (Operation()) { status = StatuExp.OPERTION; Index++; continue; }
                         if (Token.Code == CODE.LPAREN) { status = StatuExp.LPAREN; Index++; countLPAREN++; continue; }
                         if (Token.Code == CODE.RPAREN) { status = StatuExp.RPAREN; Index++; countRPAREN++; continue; }
@@ -124,8 +123,7 @@ namespace Compiler.Analysis
                             errorValue += Token.TokenValue;
                             Index++;
                         }
-                        if (errorValue != "") AddError($"Ожидался операнд, а нашлось {errorValue}");
-                        else AddError($"Ожидался операнд, а нашлось {Token.TokenValue}");
+                        AddError($"Ожидалось: операнд.");
                         if (Operation()) { status = StatuExp.OPERTION; Index++; continue; }
                         if (Token.Code == CODE.LPAREN) { status = StatuExp.LPAREN; Index++; countLPAREN++; continue; }
                         if (Token.Code == CODE.RPAREN) { status = StatuExp.RPAREN; Index++; countRPAREN++; continue; }
@@ -156,8 +154,7 @@ namespace Compiler.Analysis
                             errorValue += Token.TokenValue;
                             Index++;
                         }
-                        if (errorValue != "") AddError($"Ожидался операнд или ), а нашлось {errorValue}");
-                        else AddError($"Ожидался операнд или ), а нашлось {Token.TokenValue}");
+                        AddError($"Ожидалось: операнд или ).");
 
                         if (Operation()) { status = StatuExp.OPERTION; Index++; continue; }
                         if (Token.Code == CODE.LPAREN) { status = StatuExp.LPAREN; Index++; countLPAREN++; continue; }
@@ -182,8 +179,7 @@ namespace Compiler.Analysis
                             errorValue += Token.TokenValue;
                             Index++;
                         }
-                        if (errorValue != "") AddError($"Ожидалась арифметическая операция, а нашлось {errorValue}");
-                        else AddError($"Ожидалась арифметическая операция, а нашлось {Token.TokenValue}");
+                        AddError($"Ожидалось: арифметическая операция.");
 
                         if (Operation()) { status = StatuExp.OPERTION; Index++; continue; }
                         if (Token.Code == CODE.LPAREN) { status = StatuExp.LPAREN; Index++; countLPAREN++; continue; }
@@ -196,37 +192,37 @@ namespace Compiler.Analysis
 
             if (status != StatuExp.OPERAND && status != StatuExp.RPAREN)
             {
-                AddError($"Ожидался операнд или )", 0, _tokens[Index]);
+                AddError($"Ожидалось: операнд или ).", 0, _tokens[Index]);
             }
 
             if (countLPAREN > countRPAREN)
             {
-                AddError($"Ожидалось )");
+                AddError($"Ожидалось: ).");
             }
 
             if (countRPAREN > countLPAREN)
             {
                 int _ = Index;
                 Index = 0;
-                AddError($"Ожидалось (");
+                AddError($"Ожидалось: (.");
                 Index = _;
             }
 
             if (!findRBRACE)
             {
-                AddError("Ожидалось }");
-                return;
-            }
-            if (!findEND) 
-            {
-                AddError("Ожидалось ;");
+                AddError("Ожидалось: }.");
                 return;
             }
 
-            if (ENDPos - RBRACEPos != 1)
+            if (findEND && findRBRACE && ENDPos - RBRACEPos != 1)
             {
-                AddError($"Неожиданная последовательность" , 0, _tokens[RBRACEPos  + 1]);
+                AddError($"Лишняя последовательность символов." , 0, _tokens[RBRACEPos  + 1]);
             } 
+
+            if (findRBRACE && !findEND && _tokens[RBRACEPos + 1].Code != CODE.DELIMITER)
+            {
+                AddError($"Лишняя последовательность символов.", 0, _tokens[RBRACEPos + 1]);
+            }
 
         }
     }

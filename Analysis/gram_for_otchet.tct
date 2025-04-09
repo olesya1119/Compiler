@@ -1,0 +1,35 @@
+﻿G[F]:
+
+1) <F> -> 'func '<N>
+2) <N> -> id <R>
+3) <R> -> '('<G>
+
+4) <G> -> <L><D> | <D>
+5) <L> -> <P>' '<TYPE>
+6) <P> -> id ','<P> | id
+
+7) <D> -> ')'<Y>
+8) <Y> -> type <K>
+9) <K> -> '{'<Q>
+
+<Q> -> "return "<RETURN_VALUE>
+<RETURN_VALUE> -> <EXPRESSION><END_FUNC_BODY>
+<END_FUNC_BODY> -> "}"<END>
+<END> -> ";"
+
+<E> -> <T><A>
+<A> -> '+'<T><A> | '-'<T><A> | e
+<T> -> <O><B>
+<B> -> '*'<O><B> | '/'<O><B> | e
+<O> -> id | num | '('<E>')'
+
+
+<IDENTIFIER> -> <LETTER><IDENTIFIER_REM>
+<IDENTIFIER_REM> -> <LETTER> | <DIGIT> | e
+
+<NUMBER> -> <DIGIT><NUMBER_TAIL>
+<NUMBER_TAIL> -> <DIGIT><NUMBER_TAIL> | e
+
+<LETTER> ->  "a" | "b" | ... | "z" | "A" | "B" | ... | "Z"
+<DIGIT> -> "0" | "1" | ... | "9"
+<TYPE> -> "int" | "uint" | "float32" | "float64"

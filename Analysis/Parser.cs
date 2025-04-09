@@ -49,10 +49,10 @@ namespace Compiler.Analysis
             {
                 argumentsParser.Parse();
             }
-            catch { }
+            //catch { }
             finally
             {
-                //AddErrorsList(argumentsParser.Errors);
+                AddErrorsList(argumentsParser.Errors);
             }
 
             var expressionParser = new ExpressionParser(argumentsParser.Tokens, argumentsParser.NextPosition, _text);
@@ -63,11 +63,11 @@ namespace Compiler.Analysis
             catch { }
             finally
             {
-                //AddErrorsList(expressionParser.Errors);
+                AddErrorsList(expressionParser.Errors);
             }
 
             SortErrors();
-            //ClearRepearError();
+            ClearRepearError();
             foreach (var er in _errors)
             {
                 Console.WriteLine(er);
@@ -96,7 +96,14 @@ namespace Compiler.Analysis
             {
                 if (_errors[i].Token == _errors[i + 1].Token)
                 {
-                    _errors.RemoveAt(i);
+                    if (_errors[i].Priority > _errors[i + 1].Priority)
+                    {
+                        _errors.RemoveAt(i + 1);
+                    }
+                    else
+                    {
+                        _errors.RemoveAt(i);
+                    }
                     continue;
                 }
                 i++;
