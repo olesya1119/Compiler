@@ -272,7 +272,7 @@ namespace Compiler.Analysis
 
                 Index = buf;
 
-                while (IsNotEndList && Token.Code != CODE.IDENTIFIER) Index++;
+                Index++;
                 if (IsNotEndList) AddError("Ожидалось: ключевое слово return.", 3, _tokens[Index]);
                 Index++;
                 NextPosition = Index;
