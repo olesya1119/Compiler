@@ -31,6 +31,7 @@ namespace Compiler.Analysis
 
         private void BeforeParse()
         {
+            _tokens.Add(new Token(CODE.DELIMITER, " ", _tokens[_tokens.Count - 1].Line, _tokens[_tokens.Count - 1].EndColumn + 1, _tokens[_tokens.Count - 1].EndColumn + 1, _tokens[_tokens.Count - 1].EndIndex + 1, _tokens[_tokens.Count - 1].EndIndex + 1));
             while (Index < _tokens.Count - 1 && Token.Code != CODE.LPAREN)
             {
                 Index++;

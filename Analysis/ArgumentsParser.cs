@@ -223,10 +223,10 @@ namespace Compiler.Analysis
                 Index++;
             }
 
-            if (FindAgrsType && Index < EndPos - 1)
+            if (FindAgrsType && TypePos < EndPos - 1)
             {
                 SkipSpace();
-                startErrorToken = Token;
+                startErrorToken = _tokens[TypePos + 1];
                 errorValue = CollectError(Index, EndPos);
                 AddError($"Лишняя последовательность символов.", 0, startErrorToken);
             }
@@ -272,7 +272,6 @@ namespace Compiler.Analysis
 
                 Index = buf;
 
-                Index++;
                 if (IsNotEndList) AddError("Ожидалось: ключевое слово return.", 3, _tokens[Index]);
                 Index++;
                 NextPosition = Index;
@@ -280,13 +279,13 @@ namespace Compiler.Analysis
 
             if (!FindEnd)
             {
-                _tokens.Add(new Token(CODE.DELIMITER, " ", _tokens[_tokens.Count - 1].Line, _tokens[_tokens.Count - 1].EndColumn + 1, _tokens[_tokens.Count - 1].EndColumn + 1, _tokens[_tokens.Count - 1].EndIndex + 1, _tokens[_tokens.Count - 1].EndIndex + 1));
+             
                 AddError("Ожидалось: ;", 0, _tokens[_tokens.Count - 1]);
             }
 
-            if (FindRparen && FindLbrace && LbracePos - RparenPos != 1) AddError("Лишняя последовательность символов.", 0, _tokens[LbracePos + 1]);
+            if (FindRparen && FindLbrace && LbracePos - RparenPos != 1) AddError("Лишняя последовательность символов.", 0, _tokens[RparenPos + 1]);
 
-            if (FindLbrace && FindReturn && ReturnPos - LbracePos != 1) AddError("Лишняя последовательность символов.", 0, _tokens[RparenPos + 1]);
+            if (FindLbrace && FindReturn && ReturnPos - LbracePos != 1) AddError("Лишняя последовательность символов.", 0, _tokens[LbracePos + 1]);
 
             if (NextPosition >= _tokens.Count) NextPosition = _tokens.Count - 1;
             //AddError("Аргументы: " + Tokens[NextPosition].ToString(), 0, Tokens[NextPosition]);

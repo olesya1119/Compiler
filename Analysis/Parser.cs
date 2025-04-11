@@ -29,10 +29,42 @@ namespace Compiler.Analysis
 
         public List<ErrorEntry> Parse()
         {
+            /*
+            string[] parts = _text.Split(';').Select((s, i) => i < _text.Count(c => c == ';') ? s + ";" : s).ToArray();
+            for (int i = 0; i < parts.Length; i++)
+            {
+                _text = parts[i];
+                ParseOneFunc();
+            }
+            */
+
             var scaner = new Scaner();
             _tokens = scaner.Scan(_text);
             RemoveUnknownSymbols();
-            var funcHeadParser = new FuncHeadParser(_tokens, 0, _text);
+            List<Token> tokens = new List<Token>() { };
+            int i = 0;
+            while (i < _tokens.Count)
+            {
+                while (i < _tokens.Count && _tokens[i].Code != CODE.END)
+                {
+                    tokens.Add(_tokens[i]);
+                    i++;
+                }
+                if (i < _tokens.Count) tokens.Add(_tokens[i]);
+                ParseOneFunc(tokens);
+                tokens.Clear();
+                i++;
+            }
+            
+
+
+            return _errors;
+        }
+
+
+        public void ParseOneFunc(List<Token> tokens)
+        {
+            var funcHeadParser = new FuncHeadParser(tokens, 0, _text);
             try
             {
                 funcHeadParser.Parse();
@@ -49,7 +81,7 @@ namespace Compiler.Analysis
             {
                 argumentsParser.Parse();
             }
-            //catch { }
+            catch { }
             finally
             {
                 AddErrorsList(argumentsParser.Errors);
@@ -79,8 +111,6 @@ namespace Compiler.Analysis
                 Console.WriteLine(token);
             }
 
-
-            return _errors;
         }
 
 
