@@ -130,7 +130,6 @@ namespace Compiler.Analysis
                 NextPosition = Index;
             }
 
-            //AddError($"ГОЛОВА: {_tokens[NextPosition]}");
 
         }
     }

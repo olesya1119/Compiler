@@ -65,11 +65,42 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Views\AnalysisMethod.xaml.cs">
+      <DependentUpon>AnalysisMethod.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ErrorHandlingWindow.xaml.cs">
+      <DependentUpon>ErrorHandlingWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GrammarClassificationWindow.xaml.cs">
+      <DependentUpon>GrammarClassificationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReferencesWindow.xaml.cs">
+      <DependentUpon>ReferencesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TaskWindow.xaml.cs">
+      <DependentUpon>TaskWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="Views\AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\AnalysisMethod.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ConfirmExitWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ErrorHandlingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GrammarClassificationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GramWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -109,6 +140,9 @@
     <Compile Include="Views\ConfirmExitWindow.xaml.cs">
       <DependentUpon>ConfirmExitWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\GramWindow.xaml.cs">
+      <DependentUpon>GramWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HelpWindow.xaml.cs">
       <DependentUpon>HelpWindow.xaml</DependentUpon>
     </Compile>
@@ -116,6 +150,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ReferencesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TaskWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

@@ -1,5 +1,6 @@
 ﻿using Compiler.Analysis;
 using Compiler.Model;
+using Compiler.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,49 +42,62 @@ namespace Compiler.ViewModel
         /// <summary> Обработчик события для пункта "Постановка задачи" </summary>
         private void ShowTaskDefinition(object parameter)
         {
-            MessageBox.Show("Постановка задачи");
+            TaskWindow Window = new TaskWindow();
+            Window.Show();
         }
 
         /// <summary> Обработчик события для пункта "Грамматика" </summary>
         private void ShowGrammar(object parameter)
         {
-            MessageBox.Show("Грамматика");
+            GramWindow window = new GramWindow();
+            window.Show();
         }
 
         /// <summary> Обработчик события для классификации грамматики </summary>
         private void ShowGrammarClassification(object parameter)
         {
-            MessageBox.Show("Классификация грамматики");
+            GrammarClassificationWindow window = new GrammarClassificationWindow();
+            window.Show();
         }
 
         /// <summary> Обработчик события для метода анализа </summary>
         private void ShowAnalysisMethod(object parameter)
         {
-            MessageBox.Show("Метод анализа");
+            AnalysisMethod window = new AnalysisMethod();
+            window.Show();
         }
 
         /// <summary> Обработчик события для диагностики и нейтрализации ошибок </summary>
         private void ShowErrorDiagnostics(object parameter)
         {
-            MessageBox.Show("Диагностика и нейтрализация ошибок");
+            ErrorHandlingWindow window = new ErrorHandlingWindow();
+            window.Show();
         }
 
         /// <summary> Обработчик события для тестового примера </summary>
         private void ShowTestExample(object parameter)
         {
-            MessageBox.Show("Тестовый пример");
+            if (DocumentsVM.SelectedDocument == null)
+            {
+                DocumentsVM.NewDocument(1);
+            }
+
+            DocumentsVM.SelectedDocument.TextContent = "func calc(a, b, c int){\r\n\treturn a * (b - c)\r\n};";
+
+
         }
 
         /// <summary> Обработчик события для списка литературы </summary>
         private void ShowLiteratureList(object parameter)
         {
-            MessageBox.Show("Список литературы");
+            ReferencesWindow window = new ReferencesWindow();
+            window.Show();
         }
 
         /// <summary> Обработчик события для исходного кода программы </summary>
         private void ShowSourceCode(object parameter)
         {
-            MessageBox.Show("Исходный код программы");
+            MessageBox.Show("Листинг программной части разработанного синтаксического анализатора создания функции языка Go представлен в приложении Б.");
         }
 
         /// <summary> Обработчик события для запуска программы </summary>

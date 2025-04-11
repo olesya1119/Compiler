@@ -50,7 +50,7 @@ namespace Compiler.ViewModel
                 OnPropertyChanged(); }
         }
 
-        private void NewDocument(object parameter)
+        public void NewDocument(object parameter)
         {
             var newDoc = new DocumentModel("Новый документ");
             OpenDocuments.Add(newDoc);

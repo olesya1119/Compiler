@@ -45,7 +45,7 @@ namespace Compiler.Analysis
         {
             if (_tokens.Count == 0) return _errors;
             FindArgumentsEnd();
-            ParseArguments();
+            Arguments();
             return _errors;
         }
 
@@ -122,7 +122,7 @@ namespace Compiler.Analysis
         }
 
         // Проверка аргументов
-        private void ParseArguments()
+        private void Arguments()
         {
             // Начитаем перебирать аргументы
             CODE lastCode = CODE.COMMA;
@@ -288,113 +288,6 @@ namespace Compiler.Analysis
             if (FindLbrace && FindReturn && ReturnPos - LbracePos != 1) AddError("Лишняя последовательность символов.", 0, _tokens[LbracePos + 1]);
 
             if (NextPosition >= _tokens.Count) NextPosition = _tokens.Count - 1;
-            //AddError("Аргументы: " + Tokens[NextPosition].ToString(), 0, Tokens[NextPosition]);
-
-
-            /*Index = EndPos;
-            if (Status != ArgumentsStatus.FIND_RPAREN)
-            {
-                AddError("Ожидалось )");
-            }
-
-            Index = EndPos + 1;
-            NextPosition = Index;
-
-            if (Status == ArgumentsStatus.FIND_RPAREN)
-            {
-                while (IsNotEndList && Token.Code != CODE.LBRACE)
-                {
-                    Index++;
-                }
-                if (Token.Code != CODE.LBRACE)
-                {
-                    Index = EndPos + 1;
-                    AddError("Ожидалось {");
-                    Index++;
-                }
-                else
-                {
-                    if (Index != EndPos + 1)
-                    {
-                        startErrorToken = Token;
-                        errorValue = CollectError(Index, EndPos + 1);
-                        if (errorValue != "")
-                        {
-                            AddError($"Неожиданное значение после ) '{errorValue}'.", 0, startErrorToken);
-                        }
-                        else
-                        {
-                            AddError($"Неожиданное значение после ) '{Token.TokenValue}'.");
-                        }
-                    }
-                    Index++;
-                }
-
-
-            }
-
-            if (Status == ArgumentsStatus.FIND_LBRACE || Status == ArgumentsStatus.FIND_RPAREN)
-            {
-                int startPos = Index;
-                while (Token.Code != CODE.RETURN && IsNotEndList)
-                {
-                    Index++;
-                }
-                if (Token.Code != CODE.RETURN)
-                {
-                    Index = EndPos + 2;
-                    AddError("Ожидалось return");
-                    startErrorToken = Token;
-                    errorValue = CollectError(Index, _tokens.Count, true, () => Token.Code != CODE.IDENTIFIER);
-                    if (errorValue != "")
-                    {
-                        AddError($"Ожидалось return, а нашлось '{errorValue}'.", 0, startErrorToken);
-                    }
-                    else
-                    {
-                        AddError($"Ожидалось return, а нашлось '{Token.TokenValue}'.");
-                    }
-
-                    NextPosition = Index + 1;
-                    return;
-                }
-                else
-                {
-                    if (Index != startPos)
-                    {
-                        startErrorToken = Token;
-                        errorValue = CollectError(startPos, Index, false);
-                        if (errorValue != "")
-                        {
-                            AddError($"Неожиданное значение перед return '{errorValue}'.", 0, startErrorToken);
-                        }
-                        else
-                        {
-                            AddError($"Неожиданное значение перед return '{Token.TokenValue}'.");
-                        }
-                    }
-                    NextPosition = Index + 1;
-                }
-            }
-
-            if (Status == ArgumentsStatus.FIND_RETURN)
-            {
-                NextPosition = EndPos + 1;
-            }
-
-            if (Status == ArgumentsStatus.FIND_END)
-            {
-                NextPosition = EndPos + 1;
-            }
-
-            if (Status == ArgumentsStatus.NOT_FIND)
-            {
-                Index = EndPos;
-                AddError("Ожидалось ;");
-            }
-
-            AddError("Аргументы: " + Tokens[NextPosition].ToString(), 0, Tokens[NextPosition]);*/
-
         }
 
             

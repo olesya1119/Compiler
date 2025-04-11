@@ -1,27 +1,27 @@
-﻿G[F]:
+﻿﻿G[FUNC]:
 
-1) <F> -> 'func '<N>
-2) <N> -> id <R>
-3) <R> -> '('<G>
+<FUNC> -> "func "<FUNC_NAME>
+<FUNC_NAME> -> <IDENTIFIER><AFTER_FUNC_NAME>
+<AFTER_FUNC_NAME> -> "("<ARGUMENTS>
 
-4) <G> -> <L><D> | <D>
-5) <L> -> <P>' '<TYPE>
-6) <P> -> id ','<P> | id
+<ARGUMENTS> -> <PARAMS_LIST><ARGUMENTS_END> | <ARGUMENTS_END>
+<PARAMS_LIST> -> <PARAMS>" "<TYPE>
+<PARAMS> -> <IDENTIFIER>","<PARAMS> | <IDENTIFIER>
 
-7) <D> -> ')'<Y>
-8) <Y> -> type <K>
-9) <K> -> '{'<Q>
+<ARGUMENTS_END> -> ")"<RETURN_TYPE>
+<RETURN_TYPE> -> <TYPE><AFTER_RETURN_TYPE>
+<AFTER_RETURN_TYPE> -> "{"<FUNC_BODY>
 
-<Q> -> "return "<RETURN_VALUE>
+<FUNC_BODY> -> "return "<RETURN_VALUE>
 <RETURN_VALUE> -> <EXPRESSION><END_FUNC_BODY>
 <END_FUNC_BODY> -> "}"<END>
 <END> -> ";"
 
-<E> -> <T><A>
-<A> -> '+'<T><A> | '-'<T><A> | e
-<T> -> <O><B>
-<B> -> '*'<O><B> | '/'<O><B> | e
-<O> -> id | num | '('<E>')'
+<EXPRESSION> -> <TERM><A>
+<A> -> "+"<TERM><A> | "-"<TERM><A> | e
+<TERM> -> <OPERAND><B>
+<B> -> "*"<OPERAND><B> | "/"<OPERAND><B> | e
+<OPERAND> -> <IDENTIFIER> | <NUMBER> | "("<EXPRESSION>")"
 
 
 <IDENTIFIER> -> <LETTER><IDENTIFIER_REM>
