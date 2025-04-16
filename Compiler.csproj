@@ -71,6 +71,9 @@
     <Compile Include="Views\ErrorHandlingWindow.xaml.cs">
       <DependentUpon>ErrorHandlingWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\GoParserExamples.xaml.cs">
+      <DependentUpon>GoParserExamples.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\GrammarClassificationWindow.xaml.cs">
       <DependentUpon>GrammarClassificationWindow.xaml</DependentUpon>
     </Compile>
@@ -93,6 +96,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ErrorHandlingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GoParserExamples.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -231,6 +238,14 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Views\TestExamples\Image1.png" />
+    <Resource Include="Views\TestExamples\Image2.png" />
+    <Resource Include="Views\TestExamples\Image3.png" />
+    <Resource Include="Views\TestExamples\Image4.png" />
+    <Resource Include="Views\TestExamples\Image5.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Fody.6.8.2\build\Fody.targets" Condition="Exists('packages\Fody.6.8.2\build\Fody.targets')" />

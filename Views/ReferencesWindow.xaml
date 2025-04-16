@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Compiler.Views"
         mc:Ignorable="d"
-        Title="ReferencesWindow" Height="450" Width="800">
+        Title="Список литературыw" Height="450" Width="800">
     <Grid Margin="20">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel HorizontalAlignment="Center">

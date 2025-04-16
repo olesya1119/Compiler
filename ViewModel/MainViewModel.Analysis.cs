@@ -77,12 +77,16 @@ namespace Compiler.ViewModel
         /// <summary> Обработчик события для тестового примера </summary>
         private void ShowTestExample(object parameter)
         {
+            /*
             if (DocumentsVM.SelectedDocument == null)
             {
                 DocumentsVM.NewDocument(1);
             }
 
-            DocumentsVM.SelectedDocument.TextContent = "func calc(a, b, c int){\r\n\treturn a * (b - c)\r\n};";
+            DocumentsVM.SelectedDocument.TextContent = "func calc(a, b, c int){\r\n\treturn a * (b - c)\r\n};";*/
+
+            GoParserExamples window = new GoParserExamples();
+            window.Show();
 
 
         }
