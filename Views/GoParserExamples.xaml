@@ -1,0 +1,86 @@
+﻿<Window x:Class="Compiler.Views.GoParserExamples"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Compiler.Views"
+        mc:Ignorable="d"
+        Title="Тестовые примеры" Height="600" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <TextBlock Grid.Row="0" Text="Тестовые примеры" 
+                   FontSize="16" HorizontalAlignment="Center" Margin="10"/>
+
+        <!-- Область с картинками -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20">
+                <!-- Пример 1 -->
+                <Border BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Пример 1: Корректная функция с арифметикой" 
+                                   FontWeight="Bold" Margin="10,10,10,5"/>
+                        <TextBlock Text="“func calc(a, b, c int) { return a + b * (c - 10) };”" 
+           FontFamily="Consolas" Margin="10,0,10,10"/>
+                        <Image x:Name="Image1" Height="377" Margin="10" Stretch="Uniform" Source="/Views/TestExamples/Image1.png" />
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Пример 2 -->
+                <Border BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Пример 2: Корректная функция с ошибкой в переменной" 
+                                   FontWeight="Bold" Margin="10,10,10,5"/>
+                        <TextBlock Text="“func super(fn, wet int) { return 15 - qq / fn * 35 };”" 
+           FontFamily="Consolas" Margin="10,0,10,10"/>
+                        <Image x:Name="Image2" Height="377" Margin="10" Stretch="Uniform" Source="/Views/TestExamples/Image2.png" />
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Пример 3 -->
+                <Border BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Пример 3: Ошибка в синтаксисе (пропущена запятая)" 
+                                   FontWeight="Bold" Margin="10,10,10,5"/>
+                        <TextBlock Text="“func super(fn wet int) { retrn 15 - qq / fn * 35};”" 
+           FontFamily="Consolas" Margin="10,0,10,10"/>
+                        <Image x:Name="Image3" Height="377" Margin="10" Stretch="Uniform" Source="/Views/TestExamples/Image3.png"/>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Пример 4 -->
+                <Border BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Пример 4: Неправильное имя функции и скобки" 
+                                   FontWeight="Bold" Margin="10,10,10,5"/>
+                        <TextBlock Text="“fnc supe^r(fn, wet, it) {return fn * (wet - it};”" 
+           FontFamily="Consolas" Margin="10,0,10,10"/>
+                        <Image x:Name="Image4" Height="377" Margin="10" Stretch="Uniform" Source="/Views/TestExamples/Image4.png"/>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Пример 5 -->
+                <Border BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Пример 5: Недопустимые символы в имени функции" 
+                                   FontWeight="Bold" Margin="10,10,10,5"/>
+                        <TextBlock Text="“func &amp;&amp;&amp; super(fn, gfg wet int) {retrn fn * (wet - it)}”" 
+           FontFamily="Consolas" Margin="10,0,10,10"/>
+                        <Image x:Name="Image5" Height="377" Margin="10" Stretch="Uniform" Source="/Views/TestExamples/Image5.png"/>
+
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+</Window>

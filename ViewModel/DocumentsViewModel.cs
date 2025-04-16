@@ -46,10 +46,11 @@ namespace Compiler.ViewModel
         public TextEditor Editor
         {
             get => _editor;
-            set { _editor = value; OnPropertyChanged(); }
+            set { _editor = value; 
+                OnPropertyChanged(); }
         }
 
-        private void NewDocument(object parameter)
+        public void NewDocument(object parameter)
         {
             var newDoc = new DocumentModel("Новый документ");
             OpenDocuments.Add(newDoc);

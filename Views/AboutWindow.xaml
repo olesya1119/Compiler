@@ -28,15 +28,6 @@
 
             </TextBlock>
 
-            <!-- Ссылка на GitHub -->
-            <TextBlock FontSize="14"
-                       Foreground="#FFECA4A4"
-                       Text="Ссылка на GitHub репозиторий"
-                       TextAlignment="Center"
-                       Cursor="Hand"
-                       MouseLeftButtonUp="OpenGitHubLink"
-                       Margin="0,5,0,10" FontStyle="Italic" TextDecorations="Underline"/>
-
         </StackPanel>
     </Grid>
 </Window>

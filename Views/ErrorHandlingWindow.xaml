@@ -1,0 +1,46 @@
+﻿<Window x:Class="Compiler.Views.ErrorHandlingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Compiler.Views"
+        mc:Ignorable="d"
+        Title="Диагностика и нейтрализация синтаксических ошибок" Height="450" Width="800">
+    <Grid Margin="20">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel HorizontalAlignment="Center">
+                <!-- Заголовок -->
+                <TextBlock Text="Диагностика и нейтрализация синтаксических ошибок"
+                           FontSize="18" FontWeight="Bold"
+                           Foreground="#FF60506B"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           Width="650"/>
+
+                <!-- Основной текст -->
+                <TextBlock FontSize="14"
+                           Foreground="#FF4A4848"
+                           TextAlignment="Left"
+                           TextWrapping="Wrap"
+                           Width="650">
+                    <Run Text="Согласно заданию на курсовую работу, необходимо реализовать нейтрализацию синтаксических ошибок, используя метод Айронса."/><LineBreak/><LineBreak/>
+                    
+                    <Run Text="Суть метода Айронса заключается в следующем:"/><LineBreak/>
+                    <Run Text="При обнаружении ошибки (во входной цепочке в процессе разбора встречается символ, который не соответствует ни одному из ожидаемых символов), входная цепочка символов выглядит следующим образом: Tt, где:"/><LineBreak/>
+                    <Run Text="- T – следующий символ во входном потоке (ошибочный символ)" FontStyle="Italic"/><LineBreak/>
+                    <Run Text="- t – оставшаяся во входном потоке цепочка символов после T" FontStyle="Italic"/><LineBreak/><LineBreak/>
+                    
+                    <Run Text="Алгоритм нейтрализации состоит из следующих шагов:"/><LineBreak/>
+                    <Run Text="1. Определяются недостроенные кусты дерева разбора"/><LineBreak/>
+                    <Run Text="2. Формируется множество L – множество остаточных символов недостроенных кустов дерева разбора"/><LineBreak/>
+                    <Run Text="3. Из входной цепочки удаляется следующий символ до тех пор, пока цепочка не примет вид Tt, такой, что U ⇒ T, где U ∈ L, то есть до тех пор, пока следующий в цепочке символ T не сможет быть выведен из какого-нибудь из остаточных символов недостроенных кустов"/><LineBreak/>
+                    <Run Text="4. Определяется, какой из недостроенных кустов стал причиной появления символа U в множестве L (иначе говоря, частью какого из недостроенных кустов является символ U)"/><LineBreak/><LineBreak/>
+                    
+                    <Run Text="Таким образом, определяется, к какому кусту в дереве разбора можно «привязать» оставшуюся входную цепочку символов после удаления из текста ошибочного фрагмента."/>
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

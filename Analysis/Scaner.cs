@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,33 +6,7 @@ using System.Threading.Tasks;
 
 namespace Compiler.Analysis
 {
-    public enum CODE
-    {
-        ERROR, // Ошибка
-        INT, // int
-        UINT, // uint
-        FLOAT32, // float32
-        FLOAT64, // float64
-        FUNC, // func
-        RETURN, // return
-        IDENTIFIER, // Идентификатор
-        DELIMITER, // Разделитель (пробел)
-        PLUS, // +
-        MINUS, // -
-        MULTIPLY, // *
-        DIVIDE, // /
-        LBRACE, // {
-        RBRACE, // }
-        LPAREN, // (
-        RPAREN, // )
-        COMMA, // ,
-        UNSIGNED_INT, // Беззнаковое целое число
-        END // ; (конец оператора)
-    }
-
-
-
-    class Scaner
+    public class Scaner
     {
         Dictionary<string, CODE> keyWords = new Dictionary<string, CODE>()
         {
@@ -45,100 +18,121 @@ namespace Compiler.Analysis
             { "return", CODE.RETURN }
         };
 
-        public List<Token> Parse(string text)
+        public List<Token> Scan(string text)
         {
             var tokens = new List<Token>();
-            int line = 1, startColumn = 1, endColumn = 1;
+            int line = 1, currentColumn = 0; // Текущая позиция в строке
+            int absoluteIndex = 0; // Абсолютный индекс в исходном тексте
 
+            text = text.Replace("\t", " ");
+            text = text.Replace("\r", " ");
 
-            for (int i = 0; i < text.Length; i++)
+            for (int i = 0; i < text.Length; i++, absoluteIndex++)
             {
                 var token = "";
+                int startColumn = currentColumn + 1; // Начало токена
+                int startIndex = absoluteIndex;     // Начальный индекс в исходном тексте
+
+                // Пропускаем пробелы и новые строки
+                if (text[i] == ' ')
+                {
+                    currentColumn++;
+                    continue;
+                }
+                else if (text[i] == '\n' || text[i] == '\r')
+                {
+                    line++;
+                    currentColumn = 0;
+                    continue;
+                }
 
                 // 1 - letter
                 if (isLetter(text[i]))
                 {
-                    // Читаем все символы
                     token += text[i];
-                    i++;
-                    startColumn = i;
-                    while (isLetter(text[i]) || isDigit(text[i]))
+                    currentColumn++;
+                    int j = i + 1;
+                    while (j < text.Length && (isLetter(text[j]) || isDigit(text[j])))
                     {
-                        token += text[i];
-                        i++;
+                        token += text[j];
+                        j++;
+                        currentColumn++;
+                        absoluteIndex++;
                     }
-                    endColumn = i;
+                    int endColumn = currentColumn;
+                    int endIndex = absoluteIndex;
+                    i = j - 1;
 
-                    // Создаем токен
+                    // Создаём токен
                     if (keyWords.ContainsKey(token))
                     {
-                        tokens.Add(new Token(keyWords[token], token, line, startColumn, endColumn));
+                        tokens.Add(new Token(keyWords[token], token, line, startColumn, endColumn, startIndex, endIndex));
                     }
                     else
                     {
-                        tokens.Add(new Token(CODE.IDENTIFIER, token, line, startColumn, endColumn));
+                        tokens.Add(new Token(CODE.IDENTIFIER, token, line, startColumn, endColumn, startIndex, endIndex));
                     }
 
                     // Если следующий символ - разделитель, добавляем
-                    if (isDelimiter(text[i]))
+                    if (i + 1 < text.Length && isDelimiter(text[i + 1]))
                     {
-                        tokens.Add(new Token(CODE.DELIMITER, " ", line, endColumn + 1, endColumn + 1));
+                        tokens.Add(new Token(CODE.DELIMITER, " ", line, endColumn + 1, endColumn + 1, endIndex + 1, endIndex + 1));
                     }
-                    else i--; // Иначе там что-то другое
                     continue;
                 }
 
-                // 12 - digit
+                // 2 - digit
                 if (isDigit(text[i]))
                 {
-                    // Читаем все символы
                     token += text[i];
-                    i++;
-                    startColumn = i;
-                    while (isDigit(text[i]))
+                    currentColumn++;
+                    int j = i + 1;
+                    while (j < text.Length && isDigit(text[j]))
                     {
-                        token += text[i];
-                        i++;
+                        token += text[j];
+                        j++;
+                        currentColumn++;
+                        absoluteIndex++;
                     }
-                    endColumn = i;
+                    int endColumn = currentColumn;
+                    int endIndex = absoluteIndex;
+                    i = j - 1;
 
-                    // Создаем токен
-                    tokens.Add(new Token(CODE.UNSIGNED_INT, token, line, startColumn, endColumn));
-
+                    // Создаём токен
+                    tokens.Add(new Token(CODE.UNSIGNED_INT, token, line, startColumn, endColumn, startIndex, endIndex));
 
                     // Если следующий символ - разделитель, добавляем
-                    if (isDelimiter(text[i]))
+                    if (i + 1 < text.Length && isDelimiter(text[i + 1]))
                     {
-                        tokens.Add(new Token(CODE.DELIMITER, " ", line, endColumn + 1, endColumn + 1));
+                        tokens.Add(new Token(CODE.DELIMITER, " ", line, endColumn + 1, endColumn + 1, endIndex + 1, endIndex + 1));
                     }
-                    else i--; // Иначе там что-то другое
                     continue;
                 }
 
-                // Всё остальное (что-то односимвольное)
+                // Всё остальное (односимвольные токены)
+                currentColumn++;
+                int singleCharColumn = currentColumn;
+                int endCharIndex = absoluteIndex;
                 switch (text[i])
                 {
-                    case '+': tokens.Add(new Token(CODE.PLUS, "+", line, i + 1, i + 1)); break;
-                    case '-': tokens.Add(new Token(CODE.MINUS, "-", line, i + 1, i + 1)); break;
-                    case '*': tokens.Add(new Token(CODE.MULTIPLY, "*", line, i + 1, i + 1)); break;
-                    case '/': tokens.Add(new Token(CODE.DIVIDE, "/", line, i + 1, i + 1)); break;
-                    case '{': tokens.Add(new Token(CODE.LBRACE, "{", line, i + 1, i + 1)); break;
-                    case '}': tokens.Add(new Token(CODE.RBRACE, "}", line, i + 1, i + 1)); break;
-                    case '(': tokens.Add(new Token(CODE.LPAREN, "(", line, i + 1, i + 1)); break;
-                    case ')': tokens.Add(new Token(CODE.RPAREN, ")", line, i + 1, i + 1)); break;
-                    case ',': tokens.Add(new Token(CODE.COMMA, ",", line, i + 1, i + 1)); break;
-                    case ';': tokens.Add(new Token(CODE.END, ";", line, i + 1, i + 1)); break;
-                    case '\n': case '\r': line++; break;
-                    case ' ': break;
-                    default: tokens.Add(new Token(CODE.ERROR, text[i].ToString(), line, i + 1, i + 2)); break;
+                    case '+': tokens.Add(new Token(CODE.PLUS, "+", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
+                    case '-': tokens.Add(new Token(CODE.MINUS, "-", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
+                    case '*': tokens.Add(new Token(CODE.MULTIPLY, "*", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
+                    case '/': tokens.Add(new Token(CODE.DIVIDE, "/", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
+                    case '{': tokens.Add(new Token(CODE.LBRACE, "{", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
+                    case '}': tokens.Add(new Token(CODE.RBRACE, "}", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
+                    case '(': tokens.Add(new Token(CODE.LPAREN, "(", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
+                    case ')': tokens.Add(new Token(CODE.RPAREN, ")", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
+                    case ',': tokens.Add(new Token(CODE.COMMA, ",", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
+                    case ';': tokens.Add(new Token(CODE.END, ";", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
+                    default:
+                        tokens.Add(new Token(CODE.ERROR, text[i].ToString(), line, singleCharColumn, singleCharColumn, startIndex, endCharIndex));
+                        break;
                 }
             }
-            RemoveLeadingTrailingSpaces(tokens);
 
             return tokens;
         }
-
-
 
         private bool isLetter(char c)
         {
@@ -153,44 +147,6 @@ namespace Compiler.Analysis
         private bool isDelimiter(char c)
         {
             return c == ' ' || c == '\n' || c == '\t' || c == '\r';
-        }
-
-        private void RemoveLeadingTrailingSpaces(List<Token> tokens)
-        {
-            if (tokens.Count < 2) return;
-
-            HashSet<CODE> notIgnore = new HashSet<CODE>()
-            {
-                CODE.RETURN,
-                CODE.FUNC,
-                CODE.INT,
-                CODE.UINT,
-                CODE.FLOAT32,
-                CODE.FLOAT64,
-                CODE.FUNC,
-                CODE.RETURN,
-                CODE.IDENTIFIER,
-                CODE.UNSIGNED_INT
-            };
-
-            for (int i = 0; i < tokens.Count - 2; i++)
-            {
-                if (!(notIgnore.Contains(tokens[i].Code) && notIgnore.Contains(tokens[i+2].Code) && tokens[i + 1].Code == CODE.DELIMITER))
-                {
-                    if (tokens[i + 1].Code == CODE.DELIMITER) tokens.RemoveAt(i + 1);
-
-                }
-            }
-
-            if (tokens[tokens.Count - 1].Code == CODE.DELIMITER)
-            {
-                tokens.RemoveAt(tokens.Count - 1);
-            }
-
-            if (tokens[tokens.Count - 2].Code == CODE.DELIMITER)
-            {
-                tokens.RemoveAt(tokens.Count - 2);
-            }
         }
     }
 }
