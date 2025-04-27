@@ -1,0 +1,36 @@
+﻿<Window x:Class="Compiler.Views.TaskWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Compiler.Views"
+        mc:Ignorable="d"
+        Title="Постановка задачи" Height="450" Width="800">
+    <Grid Margin="20">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel HorizontalAlignment="Center">
+                <!-- Заголовок -->
+                <TextBlock Text="Постановка задачи"
+                           FontSize="18" FontWeight="Bold"
+                           Foreground="#FF60506B"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"/>
+
+                <!-- Основной текст -->
+                <TextBlock FontSize="14"
+                           Foreground="#FF4A4848"
+                           TextAlignment="Left"
+                           TextWrapping="Wrap"
+                           Width="550">
+                    <Run Text="Функция в языке Go — это именованный блок кода, предназначенный для выполнения определенной задачи, который может принимать параметры и возвращать значения."/><LineBreak/><LineBreak/>
+                    <Run Text="Для объявления функций в языке Go используется ключевое слово func."/><LineBreak/><LineBreak/>
+                    <Run Text="Формат записи: &quot;func имя_функции(параметр1, параметр2, …, параметрN тип){ return возвращаемое_значение };&quot;"/><LineBreak/><LineBreak/>
+                    <Run Text="В связи с разработанной автоматной грамматикой G[&lt;F&gt;] синтаксический анализатор (парсер) создания функции будет считать верными следующие записи функций:"/><LineBreak/><LineBreak/>
+                    <Run Text="1) &quot;func calc(a, b, c int){ return a * (b + c) };&quot;"/><LineBreak/>
+                    <Run Text="2) &quot;func mult12(x, y int){ return x / y };&quot;"/><LineBreak/>
+                    <Run Text="3) &quot;func incr4(n int){ return n - 1 };&quot;"/><LineBreak/>
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

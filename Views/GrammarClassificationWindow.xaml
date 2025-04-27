@@ -1,0 +1,32 @@
+﻿<Window x:Class="Compiler.Views.GrammarClassificationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Compiler.Views"
+        mc:Ignorable="d"
+        Title="Классификация грамматики" Height="450" Width="800">
+    <Grid Margin="20">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel HorizontalAlignment="Center">
+                <!-- Заголовок -->
+                <TextBlock Text="Классификация грамматики"
+                           FontSize="18" FontWeight="Bold"
+                           Foreground="#FF60506B"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"/>
+
+                <!-- Основной текст -->
+                <TextBlock FontSize="14"
+                           Foreground="#FF4A4848"
+                           TextAlignment="Left"
+                           TextWrapping="Wrap"
+                           Width="550">
+                    <Run Text="Согласно классификации Хомского, полученная порождающая грамматика G[&lt;F&gt;] соответствует типу контекстно-свободных, так как правая часть каждой редукции начинается либо с терминального символа, либо с нетерминального, принадлежащего объединённому словарю."/><LineBreak/><LineBreak/>
+                    <Run Text="A → a, где A ∈ V_N, a ∈ V*."/><LineBreak/><LineBreak/>
+                    <Run Text="Грамматика G[&lt;F&gt;] не является автоматной, так как не все её редукции начинаются с терминального символа. По этой же причине данная грамматика не является S-грамматикой."/>
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

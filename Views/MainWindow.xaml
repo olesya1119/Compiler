@@ -152,6 +152,7 @@
                           AutoGenerateColumns="False"
                           Grid.Row="2"
                           SelectionMode="Single"
+                          MouseDoubleClick="DataGrid_MouseDoubleClick"
                           IsReadOnly="True"
                           Background="#7FF3E0E0">
                     <DataGrid.Columns>

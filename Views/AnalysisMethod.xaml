@@ -1,0 +1,32 @@
+﻿<Window x:Class="Compiler.Views.AnalysisMethod"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Compiler.Views"
+        mc:Ignorable="d"
+        Title="Метод анализа" Height="450" Width="800">
+    <Grid Margin="20">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel HorizontalAlignment="Center">
+                <!-- Заголовок -->
+                <TextBlock Text="Метод анализа"
+                           FontSize="18" FontWeight="Bold"
+                           Foreground="#FF60506B"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"/>
+
+                <!-- Основной текст -->
+                <TextBlock FontSize="14"
+                           Foreground="#FF4A4848"
+                           TextAlignment="Left"
+                           TextWrapping="Wrap"
+                           Width="550">
+                    <Run Text="Так как грамматика G[&lt;F&gt;] принадлежит классу контекстно-свободных, анализ реализован методом рекурсивного спуска."/><LineBreak/><LineBreak/>
+                    <Run Text="Идея метода заключается в том, что каждому нетерминалу ставится в соответствие программная функция, которая распознает цепочку, порожденную этим нетерминалом."/><LineBreak/><LineBreak/>
+                    <Run Text="Эти функции вызываются в соответствии с правилами грамматики и иногда вызывают сами себя, поэтому для реализации необходимо выбрать язык, обладающий рекурсивными возможностями, в нашем случае это язык C#."/>
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

@@ -1,0 +1,59 @@
+﻿<Window x:Class="Compiler.Views.GramWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Compiler.Views"
+        mc:Ignorable="d"
+        Title="Грамматика G[&lt;F&gt;]" Height="450" Width="800">
+    <Grid Margin="20">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel HorizontalAlignment="Center">
+                <!-- Заголовок -->
+                <TextBlock Text="Грамматика G[&lt;F&gt;]"
+                           FontSize="18" FontWeight="Bold"
+                           Foreground="#FF60506B"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"/>
+
+                <!-- Основной текст -->
+                <TextBlock FontSize="14"
+                           Foreground="#FF4A4848"
+                           TextAlignment="Left"
+                           TextWrapping="Wrap"
+                           Width="650">
+                    <Run Text="1)   &lt;F&gt; → 'func ' &lt;I&gt;" /><LineBreak/>
+                    <Run Text="2)   &lt;I&gt; → id &lt;Q&gt;" /><LineBreak/>
+                    <Run Text="3)   &lt;Q&gt; → '(' &lt;M&gt;" /><LineBreak/>
+                    <Run Text="4)   &lt;M&gt; → &lt;P&gt; &lt;L&gt;" /><LineBreak/>
+                    <Run Text="5)   &lt;P&gt; → id ' ' type | id ',' &lt;P&gt;" /><LineBreak/>
+                    <Run Text="6)   &lt;L&gt; → ')' &lt;K&gt;" /><LineBreak/>
+                    <Run Text="7)   &lt;K&gt; → '{' &lt;R&gt;" /><LineBreak/>
+                    <Run Text="8)   &lt;R&gt; → 'return ' &lt;RV&gt;" /><LineBreak/>
+                    <Run Text="9)   &lt;RV&gt; → &lt;E&gt; &lt;EB&gt;" /><LineBreak/>
+                    <Run Text="10) &lt;EB&gt; → '}' &lt;END&gt;" /><LineBreak/>
+                    <Run Text="11) &lt;E&gt; → &lt;T&gt; &lt;A&gt;" /><LineBreak/>
+                    <Run Text="12) &lt;A&gt; → '+' &lt;T&gt; &lt;A&gt; | '-' &lt;T&gt; &lt;A&gt; | ε" /><LineBreak/>
+                    <Run Text="13) &lt;T&gt; → &lt;O&gt; &lt;B&gt;" /><LineBreak/>
+                    <Run Text="14) &lt;B&gt; → '*' &lt;O&gt; &lt;B&gt; | '/' &lt;O&gt; &lt;B&gt; | ε" /><LineBreak/>
+                    <Run Text="15) &lt;O&gt; → id | num | '(' &lt;E&gt; ')'" /><LineBreak/>
+                    <Run Text="16) &lt;END&gt; → ';'" /><LineBreak/>
+                    <Run Text="17) &lt;IDENTIFIER&gt; → letter &lt;IDENTIFIER_REM&gt;" /><LineBreak/>
+                    <Run Text="18) &lt;IDENTIFIER_REM&gt; → letter | digit | ε" /><LineBreak/>
+                    <Run Text="19) &lt;NUMBER&gt; → digit &lt;NUMBER_TAIL&gt;" /><LineBreak/>
+                    <Run Text="20) &lt;NUMBER_TAIL&gt; → digit &lt;NUMBER_TAIL&gt; | ε" /><LineBreak/>
+                    <LineBreak/>
+                    <Run Text="‒ num = &lt;NUMBER&gt;" /><LineBreak/>
+                    <Run Text="‒ id = &lt;IDENTIFIER&gt;" /><LineBreak/>
+                    <Run Text="‒ letter → 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z'" /><LineBreak/>
+                    <Run Text="‒ digit → '0' | '1' | ... | '9'" /><LineBreak/>
+                    <Run Text="‒ type → ' int' | ' uint' | ' float32' | ' float64'" /><LineBreak/>
+                    <LineBreak/>
+                    <Run Text="‒ Z = &lt;F&gt;" /><LineBreak/>
+                    <Run Text="‒ VT = {a, b, ..., z, A, B, ..., Z, 0, 1, ...,9, +, -, /, *, {, }, (, ), ;}" /><LineBreak/>
+                    <Run Text="‒ VN = {&lt;F&gt;, &lt;I&gt;, &lt;Q&gt;, &lt;M&gt;, &lt;P&gt;, &lt;L&gt;, &lt;K&gt;, &lt;R&gt;, &lt;RV&gt;, &lt;EB&gt;, &lt;E&gt;, &lt;A&gt;, &lt;T&gt;, &lt;B&gt;, &lt;O&gt;, &lt;END&gt;, &lt;IDENTIFIER&gt;, &lt;IDENTIFIER_REM&gt;, &lt;NUMBER&gt;, &lt;NUMBER_TAIL&gt;}" />
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

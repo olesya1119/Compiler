@@ -1,4 +1,76 @@
-﻿# Справочная система
+# Парсер
+
+## Вариант задания
+
+Создание функции языка Go
+func calc(a, b, c int) {
+    return a + b * (c - b)
+};
+
+## Примеры допустимых строк
+
+1)	“func calc(a, b, c int) { return a + b * (c - 10) };”
+![image](https://github.com/user-attachments/assets/c88bac5d-5652-4d6c-a0b9-c899d4e48c8e)
+
+2)	“func super(fn, wet int) { return 15 - qq / fn * 35 };”   
+![image](https://github.com/user-attachments/assets/1c2ff654-8f10-4699-912e-c778cc822976)
+
+3)	“func super(fn wet int) { retrn 15 - qq / fn * 35};”  
+![image](https://github.com/user-attachments/assets/a4e050a6-2a53-48c1-a411-db8b00017a3c)
+
+4)	“fnc supe^r(fn, wet, it) {return fn * (wet - it};” 
+![image](https://github.com/user-attachments/assets/66a53898-3150-4381-a6bc-ded783eb05cc)
+
+5)	“func &&& super(fn, gfg wet int) {retrn fn * (wet - it)}” 
+![image](https://github.com/user-attachments/assets/902d530f-cd19-4d5e-bb5c-9b5981e8f5f5)
+
+## Разработанная грамматика
+
+```
+Определим грамматику создания функции языка Go G[<F>] в нотации Хомского с продукциями P:
+
+G[<F>]:
+1) <F> -> 'func ' <I>
+2) <I> -> id <Q>
+3) <Q> -> '(' <M>
+4) <M> -> <P> <L>
+5) <P> -> id ' ' type | id ',' <P> 
+6) <L> -> ')' <K>
+7) <K> -> '{' <R>
+8) <R> -> 'return '<RV>
+9) <RV> -> <E><EB>
+10) <EB> -> '}'<END>
+11) <E> -> <T> <A>
+12) <A> -> '+' <T> <A> | '-' <T> <A> | ε
+13) <T> -> <O> <B>
+14) <B> -> '*' <O> <B> | '/' <O> <B> | ε
+15) <O> -> id | num | '('<E>')'
+16) <END> -> ';'
+17) <IDENTIFIER> -> letter <IDENTIFIER_REM>
+18) <IDENTIFIER_REM> -> letter | digit | ε
+19) <NUMBER> -> digit <NUMBER_TAIL>
+20) <NUMBER_TAIL> -> digit <NUMBER_TAIL> | ε
+‒ num = <NUMBER>
+‒ id = <IDENTIFIER>
+‒ letter -> 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z'
+‒ digit -> '0' | '1' | ... | '9'
+‒ type -> ' int' | ' uint' | ' float32' | ' float64'
+Следуя введенному формальному определению грамматики, представим G[<F>] ее составляющими:
+‒ Z = <F>
+‒ VT = {a, b, ..., z, A, B, ..., Z, 0, 1, ...,9, +, -, /, *, {, }, (, ), ;}
+‒ VN = {<F>, <I>, <Q>, <M>, <P>, <L>, <K>, <R>, <RV>, <EB>, <EB>, <E>, <A>, <T>, <B>, <O>, <END>, <IDENTIFIER>, <IDENTIFIER_REM>, <NUMBER>, <NUMBER_TAIL>}.
+```
+## Классификация грамматики
+
+```
+Согласно классификации Хомского, полученная порождающая грамматика G[<F>] соответствует типу контекстно-свободных, так как правая часть каждой редукции начинается либо с терминального символа, либо с нетерминального, принадлежащего объединённому словарю.
+A →a,A∈V_N,a∈V^*.
+Грамматика G[<F>] не является автоматной, так как не все её редукции начинаются с терминального символа. По этой же причине данная грамматика не является S - грамматикой.
+```
+![image](https://github.com/user-attachments/assets/9b90ec42-779f-4e45-b9e0-e935acf77b66)
+
+
+## Справочная система
 
 Здесь вы найдете информацию о всех доступных функциях и возможностях приложения.
 
