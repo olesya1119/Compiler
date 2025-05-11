@@ -109,14 +109,8 @@ namespace Compiler.ViewModel
         {
             if (DocumentsVM.SelectedDocument != null)
             {
-                Parser parser = new Parser(DocumentsVM.SelectedDocument.TextContent);
-                DocumentsVM.SelectedErrors.Clear();
-
-                foreach (var e in parser.Parse())
-                {
-                    DocumentsVM.AddError(e.Line, e.Column, e.Message);
-
-                }
+                RegularExpressions regularExpressions = new RegularExpressions(DocumentsVM);
+                regularExpressions.Parse();
                 OnPropertyChanged(nameof(Errors));
             }
         }

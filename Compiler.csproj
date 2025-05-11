@@ -65,6 +65,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Analysis\RegularExpressions.cs" />
     <Compile Include="Views\AnalysisMethod.xaml.cs">
       <DependentUpon>AnalysisMethod.xaml</DependentUpon>
     </Compile>
@@ -119,13 +120,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Analysis\ArgumentsParser.cs" />
-    <Compile Include="Analysis\BaseParser.cs" />
-    <Compile Include="Analysis\ExpressionParser.cs" />
-    <Compile Include="Analysis\FuncHeadParser.cs" />
-    <Compile Include="Analysis\Parser.cs" />
-    <Compile Include="Analysis\Scaner.cs" />
-    <Compile Include="Analysis\Token.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -184,7 +178,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Analysis\gram_for_otchet.tct" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -232,9 +225,6 @@
     <Resource Include="Icons\icons\runAll.png" />
     <Resource Include="Icons\icons\save.png" />
     <Resource Include="Icons\icons\undo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Analysis\gram.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
