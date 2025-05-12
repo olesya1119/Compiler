@@ -8,11 +8,20 @@
 
 
 ## Решение
-1. ```\b1\d*(?:\.\d+)?\b```
-2. ```\b[А-ЯЁ][а-яё]+(?:-[А-ЯЁ][а-яё]+)?\s[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]+\b```
-3. ```(?:[A-Za-z0-9+/]{4})+(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?```
+1. ```\b1\d*(\.\d+)?\b```
+2. ```\b[А-ЯЁ][а-яё]+(-[А-ЯЁ][а-яё]+)?\s[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]+\b```
+3. ```([A-Za-z0-9+/]{4})+([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?```
 
 
 ## Тестовые примеры
-![image](https://github.com/user-attachments/assets/bb1b4e91-1f2a-4d99-a044-d63c510862ba)
+![image](https://github.com/user-attachments/assets/f0fa4dd9-85a4-46f2-8f65-54479c2082eb)
+
+![image](https://github.com/user-attachments/assets/17bcad40-d92f-4046-8cf0-8f8fc26d37e4)
+
+![image](https://github.com/user-attachments/assets/287af5d6-965b-499d-8bf7-2eb30fa2cf34)
+
+
+
+
+
 
