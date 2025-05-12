@@ -24,6 +24,9 @@ namespace Compiler.ViewModel
         public ICommand ShowLiteratureListCommand { get; private set; }
         public ICommand ShowSourceCodeCommand { get; private set; }
         public ICommand StartExecutionCommand { get; private set; }
+        public ICommand StartExecutionCommand1 { get; private set; }
+        public ICommand StartExecutionCommand2 { get; private set; }
+        public ICommand StartExecutionCommand3 { get; private set; }
 
 
         private void InitAnalysisCommand()
@@ -37,6 +40,9 @@ namespace Compiler.ViewModel
             ShowLiteratureListCommand = new RelayCommand(ShowLiteratureList);
             ShowSourceCodeCommand = new RelayCommand(ShowSourceCode);
             StartExecutionCommand = new RelayCommand(StartExecution);
+            StartExecutionCommand1 = new RelayCommand(StartExecution1);
+            StartExecutionCommand2 = new RelayCommand(StartExecution2);
+            StartExecutionCommand3 = new RelayCommand(StartExecution3);
         }
 
         /// <summary> Обработчик события для пункта "Постановка задачи" </summary>
@@ -107,10 +113,40 @@ namespace Compiler.ViewModel
         /// <summary> Обработчик события для запуска программы </summary>
         private void StartExecution(object parameter)
         {
-            if (DocumentsVM.SelectedDocument != null)
+            /*if (DocumentsVM.SelectedDocument != null)
             {
                 RegularExpressions regularExpressions = new RegularExpressions(DocumentsVM);
                 regularExpressions.Parse();
+                OnPropertyChanged(nameof(Errors));
+            }*/
+        }
+
+        private void StartExecution1(object parameter)
+        {
+            if (DocumentsVM.SelectedDocument != null)
+            {
+                RegularExpressions regularExpressions = new RegularExpressions(DocumentsVM);
+                regularExpressions.Parse(1);
+                OnPropertyChanged(nameof(Errors));
+            }
+        }
+
+        private void StartExecution2(object parameter)
+        {
+            if (DocumentsVM.SelectedDocument != null)
+            {
+                RegularExpressions regularExpressions = new RegularExpressions(DocumentsVM);
+                regularExpressions.Parse(2);
+                OnPropertyChanged(nameof(Errors));
+            }
+        }
+
+        private void StartExecution3(object parameter)
+        {
+            if (DocumentsVM.SelectedDocument != null)
+            {
+                RegularExpressions regularExpressions = new RegularExpressions(DocumentsVM);
+                regularExpressions.Parse(3);
                 OnPropertyChanged(nameof(Errors));
             }
         }

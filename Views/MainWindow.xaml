@@ -56,7 +56,9 @@
                     <MenuItem Header="Список литературы" Command="{Binding ShowLiteratureListCommand}" />
                     <MenuItem Header="Исходный код программы" Command="{Binding ShowSourceCodeCommand}" />
                 </MenuItem>
-                <MenuItem Header="Пуск" Command="{Binding StartExecutionCommand}"/>
+                <MenuItem Header="Пуск - Блок 1" Command="{Binding StartExecutionCommand1}"/>
+                <MenuItem Header="Пуск - Блок 2" Command="{Binding StartExecutionCommand2}"/>
+                <MenuItem Header="Пуск - Блок 3" Command="{Binding StartExecutionCommand3}"/>
                 <MenuItem Header="Справка">
                     <MenuItem Header="Вызов справки" Command="{Binding ShowHelpCommand}" />
                     <MenuItem Header="О программе" Command="{Binding ShowAboutCommand}" />
@@ -92,9 +94,9 @@
                     <Image Source="/Icons/paste.png" Width="16" Height="16"/>
                 </Button>
                 <Separator/>
-                <Button Command="{Binding StartExecutionCommand}">
+                <!-- <Button Command="{Binding StartExecutionCommand}">
                     <Image Source="/Icons/runAll.png" Width="16" Height="16"/>
-                </Button>
+                </Button> -->
                 <Button Command="{Binding ShowHelpCommand}">
                     <Image Source="/Icons/help.png" Width="16" Height="16"/>
                 </Button>
