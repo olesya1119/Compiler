@@ -1,229 +1,251 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Compiler.Analysis
 {
     class ExpressionParser : BaseParser
     {
-        enum StatuExp { OPERTION, OPERAND, LPAREN, RPAREN }
+        private int _indentLevel = 0;
+        private string callStack = "";
+
         public ExpressionParser(List<Token> tokens, int pos, string text) : base(tokens, pos, text)
         {
         }
 
-        public List<ErrorEntry> Parse()
+        public string Parse()
         {
             SkipSpace();
-            Console.WriteLine(Token);
-            EXPRESSION();
+            CleanParens();
+            DebugPrint("E ", 0, _tokens.Count);
+            E(0, _tokens.Count);
 
-            return _errors;
+            return callStack;
+        }
+
+        public void CleanParens()
+        {
+            Index = 0;
+            Stack<int> parenStack = new Stack<int>();
+            List<int> unmatchedRight = new List<int>();
+            List<int> unmatchedLeft = new List<int>();
+
+            // Первый проход: находим все непарные скобки
+            for (; Index < _tokens.Count; Index++)
+            {
+                if (Token.Code == CODE.LPAREN)
+                {
+                    parenStack.Push(Index);
+                }
+                else if (Token.Code == CODE.RPAREN)
+                {
+                    if (parenStack.Count > 0)
+                    {
+                        parenStack.Pop();
+                    }
+                    else
+                    {
+                        unmatchedRight.Add(Index);
+                    }
+                }
+            }
+
+            // Оставшиеся в стеке - это непарные левые скобки
+            unmatchedLeft = parenStack.ToList();
+
+            int rmCount = 0;
+            // Удаляем непарные правые скобки (с начала к концу)
+            foreach (int index in unmatchedRight.OrderByDescending(i => i))
+            {
+                AddError("Правая круглая скобка ) не имеет пары.", 0, _tokens[index - rmCount]);
+                _tokens.RemoveAt(index - rmCount);
+                rmCount++;
+            }
+
+            // Удаляем непарные левые скобки (с конца к началу)
+            foreach (int index in unmatchedLeft.OrderByDescending(i => i))
+            {
+                AddError("Левая круглая скобка ( не имеет пары.", 0, _tokens[index - rmCount]);
+                _tokens.RemoveAt(index - rmCount);
+            }
+
+            Index = 0;
         }
 
 
-        public bool Operation()
+
+        public void E(int startPos, int endPos)
         {
-            if (Token.Code == CODE.PLUS || Token.Code == CODE.MINUS || Token.Code == CODE.MULTIPLY || Token.Code == CODE.DIVIDE) return true;
-            else return false;
+            _indentLevel++;
+
+            int countRparen = 0;
+            for (Index = endPos - 1; Index > startPos; Index--)
+            {
+                if (Token.Code == CODE.RPAREN) countRparen++;
+                else if (Token.Code == CODE.LPAREN) countRparen--;
+
+                if (countRparen == 0 && (Token.Code == CODE.PLUS || Token.Code == CODE.MINUS))
+                {
+                    int bufIndex = Index; 
+                    DebugPrint("E ", startPos, Index);
+                    E(startPos, Index);
+
+                    Index = bufIndex;
+
+                    DebugPrint("T ", Index + 1, endPos);
+                    T(Index + 1, endPos);
+
+                    _indentLevel--;
+                    return;
+                }
+            }
+
+            DebugPrint("T ", startPos, endPos);
+            T(startPos, endPos);
+
+            _indentLevel--;
+
         }
 
-
-
-        public void EXPRESSION()
+        public void T(int startPos, int endPos)
         {
-            int countLPAREN = 0;
-            int countRPAREN = 0;
-            int ENDPos = 0;
-            int RBRACEPos = 0;
-            int endPos = 0;
+            _indentLevel++;
 
-            bool findEND = false;
-            bool findRBRACE = false;
-            while (IsNotEndList && Token.Code != CODE.RBRACE && Token.Code != CODE.END)
+            int countRparen = 0;
+            for (Index = endPos - 1; Index > startPos; Index--)
+            {
+                if (Token.Code == CODE.RPAREN) countRparen++;
+                else if (Token.Code == CODE.LPAREN) countRparen--;
+
+                if (countRparen == 0 && (Token.Code == CODE.MULTIPLY || Token.Code == CODE.DIVIDE))
+                {
+                    int bufIndex = Index;
+
+                    DebugPrint("T ", startPos, Index);
+                    T(startPos, Index);
+
+                    Index = bufIndex;
+
+                    DebugPrint("F ", Index + 1, endPos);
+                    F(Index + 1, endPos);
+
+                    _indentLevel--;
+                    return;
+                }
+            }
+
+            DebugPrint("F ", startPos, endPos);
+            F(startPos, endPos);
+
+            _indentLevel--;
+
+        }
+
+        public void F(int startPos, int endPos)
+        {
+            _indentLevel++;
+
+            int countRparen = 0;
+
+            for (Index = startPos; Index < endPos; Index++)
+            {
+                if (Token.Code == CODE.RPAREN) countRparen++;
+                else if (Token.Code == CODE.LPAREN) countRparen--;
+
+                if (countRparen == 0 && _tokens[Index].Code == CODE.POWER)
+                {
+                    int bufIndex = Index;
+
+                    DebugPrint("V ", startPos, Index);
+                    V(startPos, Index);
+
+                    Index = bufIndex;
+
+                    DebugPrint("F ", Index + 1, endPos);
+                    F(Index + 1, endPos);
+
+                    _indentLevel--;
+                    return;
+                }
+            }
+
+            DebugPrint("V ", startPos, endPos);
+            V(startPos, endPos);
+
+            _indentLevel--;
+
+        }
+
+        public void V(int startPos, int endPos)
+        {
+            _indentLevel++;
+
+            Index = startPos;
+            if (startPos == endPos) return;
+
+            if (Token.Code == CODE.UNSIGNED_INT || Token.Code == CODE.IDENTIFIER)
             {
                 Index++;
-            }
-            if (IsNotEndList && Token.Code == CODE.RBRACE)
-            {
-                findRBRACE = true;
-                RBRACEPos = Index;
+
+                if (Index != endPos)
+                {
+                    AddError("Неожиданная последовательность символов", 0, Token);
+                }
 
             }
-            Index = 0;
-
-            while (IsNotEndList && Token.Code != CODE.END)
+            else if (Token.Code == CODE.LPAREN)
             {
                 Index++;
-            }
-            if (Token.Code == CODE.END)
-            {
-                findEND = true;
-                ENDPos = Index;
+                for (; Index < endPos && Token.Code != CODE.RPAREN; Index++) ;
 
-            }
-            Index = 0;
-
-            if (findRBRACE) endPos = RBRACEPos;
-            else if (findEND) endPos = ENDPos;
-            else endPos = _tokens.Count;
-
-
-            StatuExp status = StatuExp.OPERTION;
-
-            while (Index < endPos)
-            {
-                SkipSpace();
-                if (Index >= endPos) break;
-                if (status == StatuExp.OPERTION)
+                if (Token.Code == CODE.RPAREN)
                 {
-                    if (Token.Code == CODE.LPAREN)
+                    if (Index < endPos - 1)
                     {
-                        countLPAREN++;
-                        status = StatuExp.LPAREN;
-                        Index++;
-                        continue;
+                        AddError("Неожиданная последовательность символов", 0, _tokens[Index + 1]);
                     }
-                    else if (Token.Code == CODE.IDENTIFIER || Token.Code == CODE.UNSIGNED_INT)
-                    {
-                        status = StatuExp.OPERAND;
-                        Index++;
-                        continue;
-                    }
-                    else
-                    {
-                        string errorValue = "";
-                        while (Index < endPos && !Operation() && Token.Code != CODE.LPAREN && Token.Code != CODE.RPAREN && Token.Code != CODE.IDENTIFIER && Token.Code != CODE.UNSIGNED_INT)
-                        {
-                            errorValue += Token.TokenValue;
-                            Index++;
-                        }
-                        AddError($"Ожидалось: операнд");
-                        if (Operation()) { status = StatuExp.OPERTION; Index++; continue; }
-                        if (Token.Code == CODE.LPAREN) { status = StatuExp.LPAREN; Index++; countLPAREN++; continue; }
-                        if (Token.Code == CODE.RPAREN) { status = StatuExp.RPAREN; Index++; countRPAREN++; continue; }
-                        if (Token.Code == CODE.IDENTIFIER || Token.Code == CODE.UNSIGNED_INT) { status = StatuExp.OPERAND; Index++; continue; }
-                    }
-                }
-
-                else if (status == StatuExp.LPAREN)
-                {
-                    if (Token.Code == CODE.IDENTIFIER || Token.Code == CODE.UNSIGNED_INT)
-                    {
-                        status = StatuExp.OPERAND;
-                        Index++;
-                        continue;
-                    }
-                    else
-                    {
-                        string errorValue = "";
-                        while (Index < endPos && !Operation() && Token.Code != CODE.LPAREN && Token.Code != CODE.RPAREN && Token.Code != CODE.IDENTIFIER && Token.Code != CODE.UNSIGNED_INT)
-                        {
-                            errorValue += Token.TokenValue;
-                            Index++;
-                        }
-                        AddError($"Ожидалось: операнд.");
-                        if (Operation()) { status = StatuExp.OPERTION; Index++; continue; }
-                        if (Token.Code == CODE.LPAREN) { status = StatuExp.LPAREN; Index++; countLPAREN++; continue; }
-                        if (Token.Code == CODE.RPAREN) { status = StatuExp.RPAREN; Index++; countRPAREN++; continue; }
-                        if (Token.Code == CODE.IDENTIFIER || Token.Code == CODE.UNSIGNED_INT) { status = StatuExp.OPERAND; Index++; continue; }
-                    }
-                }
-
-                else if (status == StatuExp.OPERAND)
-                {
-                    if (Operation())
-                    {
-                        status = StatuExp.OPERTION;
-                        Index++;
-                        continue;
-                    }
-                    else if (Token.Code == CODE.RPAREN)
-                    {
-                        status = StatuExp.RPAREN;
-                        countRPAREN++;
-                        Index++;
-                        continue;
-                    }
-                    else
-                    {
-                        string errorValue = "";
-                        while (Index < endPos && !Operation() && Token.Code != CODE.LPAREN && Token.Code != CODE.RPAREN && Token.Code != CODE.IDENTIFIER && Token.Code != CODE.UNSIGNED_INT)
-                        {
-                            errorValue += Token.TokenValue;
-                            Index++;
-                        }
-                        AddError($"Ожидалось: арифметическая операция или ).");
-
-                        if (Operation()) { status = StatuExp.OPERTION; Index++; continue; }
-                        if (Token.Code == CODE.LPAREN) { status = StatuExp.LPAREN; Index++; countLPAREN++; continue; }
-                        if (Token.Code == CODE.RPAREN) { status = StatuExp.RPAREN; Index++; countRPAREN++; continue; }
-                        if (Token.Code == CODE.IDENTIFIER || Token.Code == CODE.UNSIGNED_INT) { status = StatuExp.OPERAND; Index++; continue; }
-                    }
-                }
-
-                else
-                {
-                    if (Operation())
-                    {
-                        status = StatuExp.OPERTION;
-                        Index++;
-                        continue;
-                    }
-                    else
-                    {
-                        string errorValue = "";
-                        while (Index < endPos && !Operation() && Token.Code != CODE.LPAREN && Token.Code != CODE.RPAREN && Token.Code != CODE.IDENTIFIER && Token.Code != CODE.UNSIGNED_INT)
-                        {
-                            errorValue += Token.TokenValue;
-                            Index++;
-                        }
-                        AddError($"Ожидалось: арифметическая операция.");
-
-                        if (Operation()) { status = StatuExp.OPERTION; Index++; continue; }
-                        if (Token.Code == CODE.LPAREN) { status = StatuExp.LPAREN; Index++; countLPAREN++; continue; }
-                        if (Token.Code == CODE.RPAREN) { status = StatuExp.RPAREN; Index++; countRPAREN++; continue; }
-                        if (Token.Code == CODE.IDENTIFIER || Token.Code == CODE.UNSIGNED_INT) { status = StatuExp.OPERAND; Index++; continue; }
-                    }
-
+                    DebugPrint("E ", startPos + 1, Index);
+                    E(startPos + 1, Index);
                 }
             }
-
-            if (status != StatuExp.OPERAND && status != StatuExp.RPAREN)
+            else if (endPos < startPos)
             {
-                AddError($"Ожидалось: операнд или ).", 0, _tokens[Index]);
+                AddError("ОПА");
             }
+            _indentLevel--;
+        }
 
-            if (countLPAREN > countRPAREN)
+        public void DebugPrint(string mess, int startPos, int endPos = -1)
+        {
+            string indent = new string(' ', _indentLevel * 2); 
+            callStack += indent + mess + ": ";
+            Console.Write(indent + mess + ": ");
+
+            if (endPos == -1)
             {
-                AddError($"Ожидалось: ).");
+                Console.WriteLine($"{_tokens[startPos].TokenValue}");
+                callStack += $"{_tokens[startPos].TokenValue}\n";
             }
-
-            if (countRPAREN > countLPAREN)
+            else
             {
-                int _ = Index;
-                Index = 0;
-                AddError($"Ожидалось: (.");
-                Index = _;
+                string buf = "";
+                for (int i = startPos; i < endPos; i++)
+                {
+                    buf += _tokens[i].TokenValue + " ";
+                }
+                Console.WriteLine($"{buf}");
+                callStack += $"{buf}";
+                if (buf == "") {
+                    callStack += $"ε";
+                }
+                callStack += $"\n";
             }
-
-            if (!findRBRACE)
-            {
-                AddError("Ожидалось: }.");
-                return;
-            }
-
-            if (findEND && findRBRACE && ENDPos - RBRACEPos != 1)
-            {
-                AddError($"Лишняя последовательность символов." , 0, _tokens[RBRACEPos  + 1]);
-            } 
-
-            if (findRBRACE && !findEND && _tokens[RBRACEPos + 1].Code != CODE.DELIMITER)
-            {
-                AddError($"Лишняя последовательность символов.", 0, _tokens[RBRACEPos + 1]);
-            }
-
         }
     }
 }
+
+
+
+
+
+

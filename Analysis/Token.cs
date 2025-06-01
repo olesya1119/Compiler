@@ -10,25 +10,16 @@ namespace Compiler.Analysis
     public enum CODE
     {
         ERROR, // Ошибка
-        INT, // int
-        UINT, // uint
-        FLOAT32, // float32
-        FLOAT64, // float64
-        FUNC, // func
-        RETURN, // return
         IDENTIFIER, // Идентификатор
         DELIMITER, // Разделитель (пробел)
         PLUS, // +
         MINUS, // -
         MULTIPLY, // *
         DIVIDE, // /
-        LBRACE, // {
-        RBRACE, // }
+        POWER, // ^ 
         LPAREN, // (
         RPAREN, // )
-        COMMA, // ,
         UNSIGNED_INT, // Беззнаковое целое число
-        END // ; (конец оператора)
     }
 
     /// <summary> Класс токена </summary>
@@ -61,7 +52,7 @@ namespace Compiler.Analysis
 
         public override string ToString()
         {
-            return $"Code: {Enum.GetName(typeof(CODE), Code),-12} | Token: {_token,-15} | Line: {_line,3} | Start: {_startColumn,3} | End: {_endColumn,3}";
+            return $"Code: {Enum.GetName(typeof(CODE), Code),-12} | Token: {_token,-15}";
         }
     }
 }

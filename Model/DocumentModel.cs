@@ -11,6 +11,7 @@ namespace Compiler.Model
         private string _textContent;
         private bool _status;
         private ObservableCollection<ErrorModel> _errors = new ObservableCollection<ErrorModel>();
+        private ObservableCollection<ErrorModel> _lexems = new ObservableCollection<ErrorModel>();
 
         public string FileName
         {
@@ -80,10 +81,26 @@ namespace Compiler.Model
             }
         }
 
+        public ObservableCollection<ErrorModel> Lexems
+        {
+            get => _lexems;
+            set
+            {
+                _lexems = value;
+                OnPropertyChanged(nameof(Lexems));
+            }
+        }
+
         public void AddError(int line, int column, string message)
         {
             Errors.Add(new ErrorModel(_errors.Count + 1, _fileName, line, column, message));
             OnPropertyChanged(nameof(Errors));
+        }
+
+        public void AddLexem(int line, int column, string message)
+        {
+            Lexems.Add(new ErrorModel(_lexems.Count + 1, _fileName, line, column, message));
+            OnPropertyChanged(nameof(Lexems));
         }
 
         private void RefreshErrors()

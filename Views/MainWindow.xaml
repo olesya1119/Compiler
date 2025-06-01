@@ -148,21 +148,54 @@
                 <!-- Разделитель -->
                 <GridSplitter Grid.Row="1" Height="3" Background="#8785a2" HorizontalAlignment="Stretch"/>
 
-                <DataGrid ItemsSource="{Binding Errors}"
-                          AutoGenerateColumns="False"
-                          Grid.Row="2"
-                          SelectionMode="Single"
-                          MouseDoubleClick="DataGrid_MouseDoubleClick"
-                          IsReadOnly="True"
-                          Background="#7FF3E0E0">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="№" Binding="{Binding Number}" Width="40"/>
-                        <DataGridTextColumn Header="Файл" Binding="{Binding FileName}" Width="150"/>
-                        <DataGridTextColumn Header="Строка" Binding="{Binding Line}" Width="60"/>
-                        <DataGridTextColumn Header="Столбец" Binding="{Binding Column}" Width="60"/>
-                        <DataGridTextColumn Header="Сообщение" Binding="{Binding Message}" Width="*" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                <TabControl Grid.Row="2">
+                    <!-- Первая вкладка с DataGrid (ошибки) -->
+                    <TabItem Header="Ошибки">
+                        <DataGrid ItemsSource="{Binding Errors}"
+                  AutoGenerateColumns="False"
+                  SelectionMode="Single"
+                  MouseDoubleClick="DataGrid_MouseDoubleClick"
+                  IsReadOnly="True"
+                  Background="#7FF3E0E0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="№" Binding="{Binding Number}" Width="40"/>
+                                <DataGridTextColumn Header="Файл" Binding="{Binding FileName}" Width="150"/>
+                                <DataGridTextColumn Header="Строка" Binding="{Binding Line}" Width="60"/>
+                                <DataGridTextColumn Header="Столбец" Binding="{Binding Column}" Width="60"/>
+                                <DataGridTextColumn Header="Сообщение" Binding="{Binding Message}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+
+                    <!-- Вторая вкладка с TextBox -->
+                    <TabItem Header="Текст">
+                        <TextBox Text="{Binding CallStack}" 
+                 TextWrapping="Wrap" 
+                 AcceptsReturn="True"
+                 VerticalScrollBarVisibility="Auto"
+                 HorizontalScrollBarVisibility="Auto"
+                 FontFamily="Consolas"
+                 Padding="5"
+                 IsReadOnly="True"/>
+                    </TabItem>
+
+                    <TabItem Header="Лексемы">
+                        <DataGrid ItemsSource="{Binding Lexems}"
+                            AutoGenerateColumns="False"
+                            SelectionMode="Single"
+                            MouseDoubleClick="DataGrid_MouseDoubleClick"
+                            IsReadOnly="True"
+                            Background="#7FF3E0E0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="№" Binding="{Binding Number}" Width="40"/>
+                                <DataGridTextColumn Header="Файл" Binding="{Binding FileName}" Width="150"/>
+                                <DataGridTextColumn Header="Строка" Binding="{Binding Line}" Width="60"/>
+                                <DataGridTextColumn Header="Столбец" Binding="{Binding Column}" Width="60"/>
+                                <DataGridTextColumn Header="Сообщение" Binding="{Binding Message}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                </TabControl>
             </Grid>
         </DockPanel>
     </Grid>

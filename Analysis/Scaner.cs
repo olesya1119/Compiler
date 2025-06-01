@@ -8,15 +8,6 @@ namespace Compiler.Analysis
 {
     public class Scaner
     {
-        Dictionary<string, CODE> keyWords = new Dictionary<string, CODE>()
-        {
-            { "int", CODE.INT },
-            { "uint", CODE.UINT },
-            { "float32", CODE.FLOAT32 },
-            { "float64", CODE.FLOAT64 },
-            { "func", CODE.FUNC },
-            { "return", CODE.RETURN }
-        };
 
         public List<Token> Scan(string text)
         {
@@ -63,15 +54,8 @@ namespace Compiler.Analysis
                     int endIndex = absoluteIndex;
                     i = j - 1;
 
-                    // Создаём токен
-                    if (keyWords.ContainsKey(token))
-                    {
-                        tokens.Add(new Token(keyWords[token], token, line, startColumn, endColumn, startIndex, endIndex));
-                    }
-                    else
-                    {
-                        tokens.Add(new Token(CODE.IDENTIFIER, token, line, startColumn, endColumn, startIndex, endIndex));
-                    }
+                    tokens.Add(new Token(CODE.IDENTIFIER, token, line, startColumn, endColumn, startIndex, endIndex));
+
 
                     // Если следующий символ - разделитель, добавляем
                     if (i + 1 < text.Length && isDelimiter(text[i + 1]))
@@ -119,12 +103,9 @@ namespace Compiler.Analysis
                     case '-': tokens.Add(new Token(CODE.MINUS, "-", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
                     case '*': tokens.Add(new Token(CODE.MULTIPLY, "*", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
                     case '/': tokens.Add(new Token(CODE.DIVIDE, "/", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
-                    case '{': tokens.Add(new Token(CODE.LBRACE, "{", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
-                    case '}': tokens.Add(new Token(CODE.RBRACE, "}", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
+                    case '^': tokens.Add(new Token(CODE.POWER, "^", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
                     case '(': tokens.Add(new Token(CODE.LPAREN, "(", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
                     case ')': tokens.Add(new Token(CODE.RPAREN, ")", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
-                    case ',': tokens.Add(new Token(CODE.COMMA, ",", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
-                    case ';': tokens.Add(new Token(CODE.END, ";", line, singleCharColumn, singleCharColumn, startIndex, endCharIndex)); break;
                     default:
                         tokens.Add(new Token(CODE.ERROR, text[i].ToString(), line, singleCharColumn, singleCharColumn, startIndex, endCharIndex));
                         break;

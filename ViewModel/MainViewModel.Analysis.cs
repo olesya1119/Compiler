@@ -117,6 +117,13 @@ namespace Compiler.ViewModel
                     DocumentsVM.AddError(e.Line, e.Column, e.Message);
 
                 }
+
+                foreach (var l in parser.Tokens)
+                {
+                    DocumentsVM.AddLexem(l.Line, l.StartIndex, l.ToString());
+                }
+
+                CallStack = parser.CallStack;
                 OnPropertyChanged(nameof(Errors));
             }
         }

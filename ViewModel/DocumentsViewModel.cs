@@ -23,10 +23,12 @@ namespace Compiler.ViewModel
                 _selectedDocument = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(SelectedErrors));
+                OnPropertyChanged(nameof(SelectedLexems));
             }
         }
 
         public ObservableCollection<ErrorModel> SelectedErrors => SelectedDocument?.Errors;
+        public ObservableCollection<ErrorModel> SelectedLexems => SelectedDocument?.Lexems;
 
         public ICommand NewDocumentCommand { get; }
         public ICommand OpenDocumentCommand { get; }
@@ -119,6 +121,15 @@ namespace Compiler.ViewModel
             {
                 SelectedDocument.AddError(line, column, message);
                 OnPropertyChanged(nameof(SelectedErrors));
+            }
+        }
+
+        public void AddLexem(int line, int column, string message)
+        {
+            if (SelectedDocument != null)
+            {
+                SelectedDocument.AddLexem(line, column, message);
+                OnPropertyChanged(nameof(SelectedLexems));
             }
         }
     }

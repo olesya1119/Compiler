@@ -111,18 +111,6 @@ namespace Compiler.Analysis
             if (Token.Code == CODE.DELIMITER) Index++;
         }
 
-        ///<summary> Проверяет, что заданный токен является Типом </summary>
-        protected bool Type(Token token)
-        {
-            if (token.Code == CODE.INT || token.Code == CODE.UINT || token.Code == CODE.FLOAT32 || token.Code == CODE.FLOAT64) return true;
-            else return false;
-        }
-
-        ///<summary> Проверяет, что текущий токен является Типом </summary>
-        protected bool Type()
-        {
-            if (Token.Code == CODE.INT || Token.Code == CODE.UINT || Token.Code == CODE.FLOAT32 || Token.Code == CODE.FLOAT64) return true;
-            else return false;
-        }
+        
     }
 }

@@ -15,9 +15,12 @@ namespace Compiler.Analysis
         private List<ErrorEntry> _errors;
         protected int _index;
         protected string _text;
+        public string CallStack { get; set; }
 
         protected int Index { get { return _index; } set { _index = value; } }
         protected Token Token { get { return _tokens[Index]; } }
+
+        public List<Token> Tokens => _tokens;
 
         public Parser(string text)
         {
@@ -29,70 +32,16 @@ namespace Compiler.Analysis
 
         public List<ErrorEntry> Parse()
         {
-            /*
-            string[] parts = _text.Split(';').Select((s, i) => i < _text.Count(c => c == ';') ? s + ";" : s).ToArray();
-            for (int i = 0; i < parts.Length; i++)
-            {
-                _text = parts[i];
-                ParseOneFunc();
-            }
-            */
-
             var scaner = new Scaner();
             _tokens = scaner.Scan(_text);
             RemoveUnknownSymbols();
-            List<Token> tokens = new List<Token>() { };
-            int i = 0;
-            while (i < _tokens.Count)
-            {
-                while (i < _tokens.Count && _tokens[i].Code != CODE.END)
-                {
-                    tokens.Add(_tokens[i]);
-                    i++;
-                }
-                if (i < _tokens.Count) tokens.Add(_tokens[i]);
-                ParseOneFunc(tokens);
-                tokens.Clear();
-                i++;
-            }
-            
 
-
-            return _errors;
-        }
-
-
-        public void ParseOneFunc(List<Token> tokens)
-        {
-            var funcHeadParser = new FuncHeadParser(tokens, 0, _text);
+            var expressionParser = new ExpressionParser(_tokens, 0, _text);
             try
             {
-                funcHeadParser.Parse();
+                CallStack = expressionParser.Parse();
             }
-            catch { }
-            finally
-            {
-                AddErrorsList(funcHeadParser.Errors);
-            }
-
-
-            var argumentsParser = new ArgumentsParser(funcHeadParser.Tokens, funcHeadParser.NextPosition, _text);
-            try
-            {
-                argumentsParser.Parse();
-            }
-            catch { }
-            finally
-            {
-                AddErrorsList(argumentsParser.Errors);
-            }
-
-            var expressionParser = new ExpressionParser(argumentsParser.Tokens, argumentsParser.NextPosition, _text);
-            try
-            {
-                expressionParser.Parse();
-            }
-            catch { }
+            //catch { }
             finally
             {
                 AddErrorsList(expressionParser.Errors);
@@ -111,7 +60,11 @@ namespace Compiler.Analysis
                 Console.WriteLine(token);
             }
 
+
+            return _errors;
         }
+
+
 
 
         private void SortErrors()
@@ -197,26 +150,21 @@ namespace Compiler.Analysis
                     continue;
 
                 }
-
-                if (isWord(_tokens[i].Code))
-                {
-                    switch (_tokens[i].TokenValue)
-                    {
-                        case "func":
-                            _tokens[i].Code = CODE.FUNC; break;
-                        case "int":
-                            _tokens[i].Code = CODE.INT; break;
-                        case "uint":
-                            _tokens[i].Code = CODE.UINT; break;
-                        case "float32":
-                            _tokens[i].Code = CODE.FLOAT32; break;
-                        case "float64":
-                            _tokens[i].Code = CODE.FLOAT64; break;
-                        case "return":
-                            _tokens[i].Code = CODE.RETURN; break;
-                    }
-                }
                 i++;
+            }
+
+            // Удаляем пробелы
+            i = 0;
+            while (i < _tokens.Count - 1)
+            {
+                if (_tokens[i].Code == CODE.DELIMITER)
+                {
+                    _tokens.RemoveAt(i);
+                }
+                else
+                {
+                    i++;
+                }
             }
         }
 
@@ -235,11 +183,5 @@ namespace Compiler.Analysis
             }
         }
 
-        private bool isWord(CODE code)
-        {
-            if (code == CODE.FUNC || code == CODE.INT || code == CODE.IDENTIFIER || code == CODE.UINT ||
-                code == CODE.FLOAT32 || code == CODE.FLOAT64 || code == CODE.RETURN) return true;
-            return false;
-        }
     }
 }
